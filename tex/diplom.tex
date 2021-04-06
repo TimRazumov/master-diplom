@@ -1,0 +1,144 @@
+\documentclass[12pt]{article}
+%\documentclass[10pt, landscape, twocolumn]{article}
+
+\usepackage{setspace}
+\onehalfspacing
+%\usepackage{russ}
+\usepackage[T2A]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath}
+
+\usepackage[lastpage,user]{zref}
+
+
+\usepackage{geometry, graphics, graphicx}
+
+\geometry
+{
+    a4paper,
+    total={210mm,297mm},
+    left=20mm,
+    right=20mm,
+    top=25mm,
+    bottom=20mm,
+}
+
+\usepackage{hyperref}
+
+\hypersetup{
+%    bookmarks=true,         % show bookmarks bar?
+%    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
+%    pdftoolbar=true,        % show Acrobat’s toolbar?
+%    pdfmenubar=true,        % show Acrobat’s menu?
+%    pdffitwindow=false,     % window fit to page when opened
+%    pdfstartview={FitH},    % fits the width of the page to the window
+%    pdftitle={My title},    % title
+%    pdfauthor={Author},     % author
+%    pdfsubject={Subject},   % subject of the document
+%    pdfcreator={Creator},   % creator of the document
+%    pdfproducer={Producer}, % producer of the document
+%    pdfkeywords={keyword1, key2, key3}, % list of keywords
+%    pdfnewwindow=true,      % links in new PDF window
+    colorlinks=false,       % false: boxed links; true: colored links
+    linkcolor=red,          % color of internal links (change box color with linkbordercolor)
+    citecolor=green,        % color of links to bibliography
+    filecolor=magenta,      % color of file links
+    urlcolor=cyan           % color of external links
+}
+% ----------------------------------------
+% ------------Колонтитулы-----------------
+\usepackage{fancyhdr}
+\pagestyle{fancy}
+
+\fancyhead{}
+\lhead{\it Задание 1}
+\chead{вариант №\,0}
+\rhead{\textbf{Выполнили:} ФИО}
+\lfoot{\scriptsize\textbf{UPD.1:}~\emph{21 апреля, 2018}}
+\cfoot{}
+\rfoot{\thepage /\zpageref{LastPage}}
+
+
+\usepackage{amsopn}
+\DeclareMathOperator{\B}{B}
+
+\usepackage{hyperref}
+
+
+\usepackage{tikz}
+\usepackage{background}
+\usepackage{tikzpagenodes}
+%\usepackage{lmodern}
+\usepackage{indentfirst}
+
+\backgroundsetup%
+{   angle=0,
+    opacity=2,
+    scale=1,
+    contents=%
+    {   \begin{tikzpicture}[remember picture,scale=3]
+            \fontsize{100}{120}\selectfont
+            \node[text=gray!50,rotate=90, above=1cm] 	at (current page text area.west) {\textbf{ФН--1}};
+            \node[text=gray!50,rotate=-90, above=1cm] 	at (current page text area.east) {\textbf{ФН--1}};          
+        \end{tikzpicture}
+    }
+}
+% ----------------------------------------
+
+\newcommand{\ul}{\underline}
+
+\usepackage{amsopn}
+\DeclareMathOperator{\up}{up}
+\DeclareMathOperator{\h}{h}
+\DeclareMathOperator{\fup}{fup}
+%\DeclareMathOperator{\ch}{ch}
+\DeclareMathOperator{\g}{g}
+
+
+\begin {document}
+\subsection*{\centerline{Вычисление атомарных функций}}
+\subsubsection*{Постановка задачи}
+\noindent
+Вычислить атомарную функцию 
+$$
+y(x) = \up(x).
+$$
+
+\subsubsection*{Решение}
+\noindent
+\textbf{1.~}Графики функций $\up(x)$ и $\up'(x)$ представлены на рис.\,\ref{fig:01}.
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=1.15]{up_plot}
+	\caption{График функции $\up(x)$ и $\up'(x)$}
+	\label{fig:01}
+\end{figure}
+
+%\newpage
+\noindent
+\textbf{2.~}Графики аналитической (\emph{зелёная} кривая) и численной (\emph{красная} кривая) 
+производных $\up'(x)$ представлены на рис.\,\ref{fig:02}.
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=1.15]{up_plot_deriv}
+	\caption{График функции $\up(x)$ и $\up'(x)$}
+	\label{fig:02}
+\end{figure}
+
+\noindent
+Введём обозначение
+\begin{equation}\label{eq:01}
+r(x):= \up'(x) - 2(\up(2x+1)-\up(2x-1)).
+\end{equation}
+Слагаемое $\up'(x)$ в правой части равенства \eqref{eq:01} вычислено приближённо.
+График модуля невязки $r(x)$ представлен на рис.\,\ref{fig:03}.
+
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=1.15]{up_plot_deriv_err}
+	\caption{График функции $|r(x)|$}
+	\label{fig:03}
+\end{figure}
+
+ 
+\end {document}
