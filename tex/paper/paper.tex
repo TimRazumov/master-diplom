@@ -3,15 +3,15 @@
 
 \usepackage{setspace}
 \onehalfspacing
-%\usepackage{russ}
 \usepackage[T2A]{fontenc}
 \usepackage[utf8]{inputenc}
 \usepackage{amsmath}
 
 \usepackage[lastpage,user]{zref}
 
-
 \usepackage{geometry, graphics, graphicx}
+
+\graphicspath{ {./images/} }
 
 \geometry
 {
@@ -26,26 +26,13 @@
 \usepackage{hyperref}
 
 \hypersetup{
-%    bookmarks=true,         % show bookmarks bar?
-%    unicode=false,          % non-Latin characters in Acrobat’s bookmarks
-%    pdftoolbar=true,        % show Acrobat’s toolbar?
-%    pdfmenubar=true,        % show Acrobat’s menu?
-%    pdffitwindow=false,     % window fit to page when opened
-%    pdfstartview={FitH},    % fits the width of the page to the window
-%    pdftitle={My title},    % title
-%    pdfauthor={Author},     % author
-%    pdfsubject={Subject},   % subject of the document
-%    pdfcreator={Creator},   % creator of the document
-%    pdfproducer={Producer}, % producer of the document
-%    pdfkeywords={keyword1, key2, key3}, % list of keywords
-%    pdfnewwindow=true,      % links in new PDF window
     colorlinks=false,       % false: boxed links; true: colored links
     linkcolor=red,          % color of internal links (change box color with linkbordercolor)
     citecolor=green,        % color of links to bibliography
     filecolor=magenta,      % color of file links
     urlcolor=cyan           % color of external links
 }
-% ----------------------------------------
+
 % ------------Колонтитулы-----------------
 \usepackage{fancyhdr}
 \pagestyle{fancy}
@@ -125,7 +112,24 @@
 
 
 \section{Постановка задачи}
-{\bf\color{ao} (TODO: допиши меня)}
+Пусть задано некоторое множество объектов $ X = X_L \cup X_T $, где $X_L$ - обучающая выборка, $X_T$ - тестовая выборка, $Y$ - множество допустимых ответов. Считаем, что существует некоторая целевая функция $g: X \rightarrow Y$, значения которой известны только на множестве $X_L$. Пусть данные распределены в соответствии с некоторым неизвестным распределением $P(x,y) = P(x) P(y|x)$, при этом задана некоторая функция потерь: 
+$$
+R(g(x), y) = 
+\begin{cases} 
+0, & y = g(x) \\
+> 0, & y \neq g(x)
+\end{cases}
+$$
+
+В соответствии с принципом минимизации эмпирического риска нам надо минимизировать функцию потерь, то есть найти такую решающую функцию $g(x)$, которая в среднем будет приводить к наименьшей погрешности. Формально, требуется решить следующую задачу минимизации:
+$$
+g(x) = \operatorname*{argmin}_{f: X \rightarrow Y} E_{X,Y} R(f(x), y)
+$$
+
+Для задачи фильтрации нежелательных данных множество $Y$ состоит из двух элементов $\{0, 1\}$, где $0$ и $1$ желательные и нежелательные данные соответственно. В силу грубости методов дискретных вычислений, на практике обычно используется $Y = R[0, 1]$, а результат работы классификатора $y' = g(x)$ отноcится к нужному классу с заданной пороговой вероятностью $\alpha$, минимизирующей ошибку первого и второго рода.
+
+
+Исходя из потребностей современного общества, мы имеем ограничение 3 секунды на время проверки одного письма, что наклыдвает дополнительные требования к используемым инструментам и остказоустойчивости всей системы. 
 
 \section{``Решение''}
 \subsection*{Предобработка текста}
@@ -155,7 +159,7 @@
 Современные алгоримы машинного обучения не могут напрямую работать с сырым текстом, поэтому необходимо построить отображение текста в векторное пространство. Это называется извлечением признаков. Рассмотрим несколько подходов для построения данного отображения.
 
 \subsubsection*{\it\,Мешок слов}
-Модель "мешок слов" - это упрощенное представления текстовой информации, используемое в задачах обработки естественных языков и поиска информации. В этой модели текст представляется в виде мешка (мультимножества) его слов или словосочетаний в случае комбинаций термов, игнорируя грамматику и в некоторых случаях даже порядок слов, но сохраняя множественность. Каждому такому терму ставится в соответствие некоторое число. В этом случае текст определяется вектором $x=(x_1, ..., x_N)^T$, где $N$ - размерность из конечного словаря $V$ состоящего из уникальных термов обучающей выборки. Возможны следующие варинаты определения $x_i$:
+Модель "мешок слов" - это упрощенное представления текстовой информации, используемое в задачах обработки естественных языков и поиска информации. В этой модели текст представляется в виде мешка (мультимножества) его слов или словосочетаний в случае комбинаций термов, игнорируя грамматику и в некоторых случаях даже порядок слов, но сохраняя множественность. Каждому такому терму (слову или словосочетанию) ставится в соответствие некоторое число. В этом случае текст определяется вектором $x=(x_1, ..., x_N)^T$, где $N$ - размерность из конечного словаря $X_L$ состоящего из уникальных термов обучающей выборки. Возможны следующие варинаты определения $x_i$:
 
 \begin{itemize}
 \item Булевский вес: $\begin{cases} 1, & \mbox{если элемент присутствует в письме} \\ 0, & \mbox{если элемент не присутствует в письме}  \end{cases}$
@@ -163,21 +167,77 @@
 \item Частота терма: $x_i = \dfrac{n_i}{\sum n_k}$
 \end{itemize}
 
+В данной работе для определения $x_i$ мы взяли частоту терма.
+
 \subsubsection*{\it\,Word2Vec}
 
 \subsubsection*{\it\,Fast Text}
 
-\subsection*{Классификатор}
+\subsection*{Классификация текста}
+После векторизации текста мы должны построить преобразование из множества признаков во множество классифицируемых объектов $g: X \rightarrow Y$
 
 \subsubsection*{\it\,Логистическая регрессия}
+Наиболее частым методом используемым в задаче классификации используется метод логистической регрессии:
+$$
+g(x) = \dfrac{1}{1 + \exp{ \{ \sum_{i=0}^n w_i x_i  \} }},
+$$
+
+где $w=(w_1, ..., w_N)^T$ - веса модели, полученные при обучении.
+
+
+Задав порог принятия решений равным $\alpha = 0.75$. Приведем результаты расчетов для разных способов векторизации текста.
+
+Для BOW эмбедингов мы имеем следующие результаты:
+\begin{center}
+  \begin{tabular}{ | c | c | c | c |}
+    \hline
+      & precision & recall & f1-score \\ \hline
+    0 & 0.99896 & 0.79620 & 0.88613 \\ \hline
+    1 & 0.91143 & 0.99961 & 0.95348 \\ \hline
+    accuracy & \multicolumn{3}{c|}{0.93395} \\                   
+    \hline
+  \end{tabular}
+\end{center}
+
+
+Для Fast Text эмбедингов мы имеем следующие результаты:
+\begin{center}
+  \begin{tabular}{ | c | c | c | c |}
+    \hline
+      & precision & recall & f1-score \\ \hline
+    0 & 0.99896 & 0.79620 & 0.88613 \\ \hline
+    1 & 0.91143 & 0.99961 & 0.95348 \\ \hline
+    accuracy & \multicolumn{3}{c|}{0.93395} \\                   
+    \hline
+  \end{tabular}
+\end{center}
+{\bf\color{amaranth} (TODO: внести результаты)}
 
 \subsubsection*{\it\,Fully convolutional neural network}
+Для Fast Text эмбедингов мы имеем следующие результаты:
+\begin{center}
+  \begin{tabular}{ | c | c | c | c |}
+    \hline
+      & precision & recall & f1-score \\ \hline
+    0 & 0.99896 & 0.79620 & 0.88613 \\ \hline
+    1 & 0.91143 & 0.99961 & 0.95348 \\ \hline
+    accuracy & \multicolumn{3}{c|}{0.93395} \\                   
+    \hline
+  \end{tabular}
+\end{center}
+{\bf\color{amaranth} (TODO: внести результаты)}
 
-\subsection*{Библиотеки Skylern, PyTorch}
+\subsection*{Реализация алгоритмов}
 
-\subsection*{Деплой c++, lua, grpc}
+\subsubsection*{\it\,Обзор библиотек}
 
-\subsection*{Результаты расчетов}
+\subsubsection*{\it\,Микросервисная архитектура}
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=0.25]{deploy.jpg}
+	\caption{График функции $\up(x)$ и $\up'(x)$}
+	\label{fig:02}
+\end{figure}
 
 \section{Conclusions}
 
