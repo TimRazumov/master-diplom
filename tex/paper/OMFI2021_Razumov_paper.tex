@@ -164,29 +164,28 @@ The results for BOW and Fast Text embeddings, are also introduced in table\,\ref
 \subsubsection{Microservice architecture}
 Since the service must operate under high loads, it is important to provide an architecture in which the failure of one component does not lead to the degradation of the entire system. The following client-server architecture is implemented (Fig. 1). Antispam daemon (mrasd) parses incoming messages and extracts text, images, and files from there. Since unwanted data is often contained inside nested images and documents, it is also necessary to extract text from them. To do this, the documents are sent to the OCR service via a deferred redis queue, which extracts the text and stores the result in the redis cache.
 
+\begin{figure}[t]
+	\center
+	\includegraphics[width=0.95\textwidth]{images/deploy.jpg}
+	\caption{\label{fig:02} Deploy}
+\end{figure}
+
+\begin{figure}[b]
+	\center
+	\includegraphics[width=0.95\textwidth]{images/timings.png}
+	\caption{\label{fig:03} Average email processing time}	
+\end{figure}
+
+
 Since, with a high probability, the letter can be a duplicate (for example, in the case of a ddos attack or offline rechecking), in order not to load the OCR service once again, the primary check of the redis cache is performed for the presence of already processed data for the specified document hash.
 
 After full text extraction, the mrasd service performs all the steps of text preprocessing (reduction to a single register, removal of stop words, normalization), and then sends the text to the mlapi service via the grpc protocol to vectorize the text using fast text and further obtain the fcnn prediction of the model by which a decision is made about the" undesirability " of the incoming message.
 
 The proposed architecture is good because when the OCR of seris, one (or several) instances of redis cluster fails, the entire system as a whole does not degrade.
  
-\begin{figure}[h!]
+\begin{figure}[t]
 	\center
-	\includegraphics[scale=0.25]{images/deploy.jpg}
-	\caption{\label{fig:02} Deploy}
-\end{figure}
-
-
-\begin{figure}[h!]
-	\center
-	\includegraphics[scale=0.6]{images/timings.png}
-	\caption{\label{fig:03} Average email processing time}	
-\end{figure}
-
-
-\begin{figure}[h!]
-	\center
-	\includegraphics[scale=0.5]{images/processed_messages.png}
+	\includegraphics[width=0.95\textwidth]{images/processed_messages.png}
 	\caption{\label{fig:04} Average number of requests per minute from one of the farms}
 \end{figure}
 
@@ -203,6 +202,7 @@ The results obtained during the training of the model on real streaming data of 
 
 A high--performance fault--tolerant microservice architecture is presented, which can withstand an average of more than $10^6$  requests per minute. At the same time, the degradation of a specific component, machine, or data center does not lead to complete inactivity of the application.
 
+\section*{References}
 \begin{thebibliography}{99}
 \bibitem{Makkar2021} 
 Aaisha Makkar, Uttam Ghosh, Pradip Kumar Sharma.
