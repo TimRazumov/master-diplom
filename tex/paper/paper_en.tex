@@ -96,9 +96,9 @@
 \maketitle
 
 \begin{abstract}
-В настоящей работе решается задача построения модели для обнаружения и фильтрации нежелательных спам--сообщений. В качестве модели классификатора нежелательных писем в электронной почте выбрана полносвязная свёрточная нейронная сеть (\textsf{FCNN}). Она позволяет разделить письма на две категории: \emph{спам} и \emph{не спам}. 
+In this paper, we solve the problem of constructing a model for detecting and filtering unwanted spam messages. A fully connected convolutional neural network (\textsf{FCNN}) was chosen as the model of the classifier of unwanted emails in email. It allows you to divide emails into two categories: \emph{spam} and \emph{not spam}.
 
-Основным результатом исследования является программное приложение на языке \textsf{C++}, имеющее микро--сервисную архитектуру, и решающее задачу классификации изображений. Приложение способно выдерживать более $10^6$ запросов в минуту в режиме реального времени.
+The main result of the research is a software application in the \textsf{C++} language, which has a micro-service architecture, and solves the problem of image classification. The app is able to handle more than $10 ^ 6 $ requests per minute in real time.
 \end{abstract}
 
 
@@ -133,10 +133,10 @@ The evolutionary model of spam classification is presented in \cite{Mohammad2020
 
 \section{Методология}
 \subsection{Формальная постановка задачи}
-Пусть задано некоторое множество объектов $ X = X_L \cup X_T $, где 
-$X_L$ --- обучающая выборка, 
-$X_T$ --- тестовая выборка, 
-$Y$ --- множество допустимых ответов. Считаем, что существует некоторая целевая функция $g: X \rightarrow Y$, значения которой известны только на множестве $X_L$. Пусть данные распределены в соответствии с некоторым неизвестным распределением $P(x,y) = P(x) P(y|x)$, при этом задана некоторая функция потерь
+Let be a set of objects $ X = X_L \cup X_T$, where
+$X_L$ --- training sample,
+$X_T$ --- test sample,
+$Y$ --- set of valid responses. We assume that there is some objective function $g: X \rightarrow Y$, whose values are known only on the set $X_L$. Let the data be distributed according to some unknown distribution $P (x,y) = P(x) P (y|x)$, with some loss function given
 $$
 R(g(x), y) = 
 \begin{cases} 
@@ -145,13 +145,12 @@ R(g(x), y) =
 \end{cases}
 $$
 
-В соответствии с принципом минимизации эмпирического риска 
-{\bf\color{amaranth} (что за принцип?)} нам надо минимизировать функцию потерь, то есть найти такую решающую функцию $g(x)$, которая в среднем будет приводить к наименьшей погрешности. Формально, требуется решить следующую задачу минимизации
+In accordance with the principle of minimizing empirical risk, we need to minimize the loss function, that is, to find such a decision function $g(x)$, which on average will lead to the smallest error. Formally, we need to solve the following minimization problem
 $$
 g(x) = \operatorname*{argmin}_{f: X \rightarrow Y} E_{X,Y} R(f(x), y).
 $$
 
-Для задачи фильтрации нежелательных данных множество $Y$ состоит из двух элементов $\{0, 1\}$, где $0$ и $1$ желательные и нежелательные данные соответственно. В силу грубости методов дискретных вычислений, на практике обычно используется $Y = R[0, 1]$, а результат работы классификатора $y' = g(x)$ {\bf\color{amaranth} (почему стоит штрих?)} отноcится к нужному классу с заданной пороговой вероятностью $\alpha$, минимизирующей ошибку первого и второго рода.
+For the problem of filtering unwanted data, the set $Y$ consists of two elements $\{0, 1\}$, where $0$ and $1$ are desirable and undesirable data, respectively. Due to the roughness of the discrete computing methods, in practice, $R = P[0, 1]$ is usually used, and the result of the classifier $r' = r(x)$ belongs to the desired class with a given threshold probability $\alpha$, which minimizes the error of the first and second kind.
 
 \subsection{Требования к решению}
 Currently, information is moving at a high speed, which imposes an additional important requirement on the speed of the model and the system as a whole. The time for checking a single message should not exceed $\leqslant3$ seconds, which imposes additional requirements on the tools used and the fault tolerance of the entire system.
@@ -189,14 +188,14 @@ Stop words are words in any language that don't add much meaning to a sentence. 
 Modern machine learning algorithms cannot directly work with raw text, so it is necessary to build a text mapping to a vector space. This is called feature extraction. Let's consider several approaches for constructing this mapping.
 
 \subsubsection*{\it\,Мешок слов}
-Модель "мешок слов" - это упрощенное представления текстовой информации, используемое в задачах обработки естественных языков и поиска информации. В этой модели текст представляется в виде мешка (мультимножества) его слов или словосочетаний в случае комбинаций термов, игнорируя грамматику и в некоторых случаях даже порядок слов, но сохраняя множественность. Каждому такому терму (слову или словосочетанию) ставится в соответствие некоторое число. В этом случае текст определяется вектором $x=(x_1, ..., x_N)^T$, где $N$ - размерность из конечного словаря $X_L$ состоящего из уникальных термов обучающей выборки. Возможны следующие варинаты определения $x_i$
+The "bag of words" model is a simplified representation of textual information used in natural language processing and information retrieval tasks. In this model, the text is represented as a bag (multiset) of its words or phrases in the case of combinations of terms, ignoring grammar and in some cases even word order, but preserving multiplicity. Each such term (word or phrase) is assigned a number. In this case, the text is defined by the vector $x=(x_1,..., x_N)^T$, where $N$ is the dimension from the finite dictionary $X_L$ consisting of unique terms of the training sample. The following options for defining $x_i$ are possible
 \begin{itemize}
-\item Булевский вес: $\begin{cases} 1, & \mbox{если элемент присутствует в письме} \\ 0, & \mbox{если элемент не присутствует в письме}  \end{cases}$
-\item Количество вхождений i-го терма в тексте: $x_i = n_i$
-\item Частота терма: $x_i = \dfrac{n_i}{\sum n_k}$
+\item Boolean weight: $\begin{cases} 1, & \mbox{если элемент присутствует в письме} \\ 0, & \mbox{если элемент не присутствует в письме}  \end{cases}$
+\item The number of occurrences of the i-th term in the text: $x_i = n_i$
+\item Term frequency: $x_i = \dfrac{n_i}{\sum n_k}$
 \end{itemize}
 
-В данной работе для определения $x_i$ мы взяли частоту терма.
+In this paper, to determine $x_i$ , we took the frequency of the term.
 
 \subsubsection*{\it\,Word2Vec}
 
@@ -211,20 +210,20 @@ FastText --- is a Word2Vec extension proposed by Facebook in 2016. Instead of en
 With this approach, the algorithm becomes more sensitive to rare words, since it is very likely that some of their n-grams are also present in other words. It takes longer to train the Fastext model, but it works better than Word2Vec and allows you to correctly represent rare words.
 
 \subsection*{Классификация текста}
-После векторизации текста мы должны построить преобразование из множества признаков во множество классифицируемых объектов $g: X \rightarrow Y$ 
+After vectorizing the text, we must construct a transformation from a set of features to a set of classifiable objects $g: X \rightarrow Y$
 
-Согласно статье [twitter threshold p. 4.6] была произведена разметка уникальных точек по бинам и вычеслена оптимальная пороговая точность $\alpha = 0.75$, которая обеспечивает оптимальный pressision и recall для нашей модели и минимизует дисперсию ошибки.
+According to the article [twitter threshold p. 4.6], unique points were marked by bins and the optimal threshold accuracy $ \ alpha = 0.75$ was calculated, which provides optimal pressision and recall for our model and minimizes the error variance.
 
 \subsubsection*{\it\,Логистическая регрессия}
-Наиболее частым методом используемым в задаче классификации используется метод логистической регрессии:
+The most common method used in the classification problem is the logistic regression method:
 $$
 g(x) = \left(1 + \exp{ \left( \sum_{i=0}^n w_i x_i  \right) }\right)^{-1},
 $$
-где $w=(w_1, ..., w_N)^T$ --- веса модели, полученные при обучении.
+where $w=(w_1,..., w_N)^T$ - - - model weights obtained during training.
 
-Приведем результаты расчетов для разных способов векторизации текста.
+Here are the results of calculations for different methods of text vectorization.
 
-Для BOW эмбедингов мы имеем следующие результаты:
+For BOW embeddings, we have the following results:
 \begin{center}
   \begin{tabular}{ | c | c |}
     \hline
@@ -234,7 +233,7 @@ $$
 \end{center}
 
 
-Для Fast Text эмбедингов мы имеем следующие результаты:
+For Fast Text embeddings we have the following results:
 \begin{center}
   \begin{tabular}{ | c | c |}
     \hline
@@ -245,15 +244,15 @@ $$
 
 \subsubsection*{\it\,Fully convolutional neural network}
 
-Fully convolutional neural network для нашей задачи имеет 3 слоя. На первых двух используется функция активации $ReLU$, на последнем $Sigmoid$. На каждом слое производится регуляризация данных. В нашем случае нейронную сеть можно определить формулой:
+The fully convolutional neural network for our task has 3 layers. The first two use the $ReLU$ activation function, and the last one uses $Sigmoid$. Data is regularized on each layer. In our case, the neural network can be defined by the formula:
 
 $$
 g(x) = h_2 \left(\sum_{k=0}^{n_2} w''_k h_1\left(\sum_{j=0}^{n_1} w'_j h_0\left( \sum_{i=0}^{n_0} w_i x_i \right)\right)\right),
 $$
 
-где $h_i$ -- функция активации для соответствующего слоя. Для нахождения весов $\{w_i\}$, $\{w'_j\}$, $\{w''_k\}$ на этапе обучения модели используется метод Адама.
+where $h_i$ is the activation function for the corresponding layer. To find the weights $\{w_i\}$, $\{w'_j\}$, $\{w"_k\}$ at the model training stage, the Adam method is used.
 
-Для BOW эмбедингов мы имеем следующие результаты:
+For BOW embeddings, we have the following results:
 \begin{center}
   \begin{tabular}{ | c | c |}
     \hline
@@ -262,7 +261,7 @@ $$
   \end{tabular}
 \end{center}
 
-Для Fast Text эмбедингов мы имеем следующие результаты:
+For Fast Text embeddings we have the following results:
 \begin{center}
   \begin{tabular}{ | c | c |}
     \hline
