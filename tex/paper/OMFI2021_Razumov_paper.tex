@@ -100,7 +100,7 @@ $0,$ else.
 $x_i = n_i.$
 \item Term frequency is $x_i = n_i\slash\left(\sum\limits_{k=1}^i n_k\right).$
 \end{enumerate}
-{\color{red}\bf To determine $x_i$, the frequency of the term is selected.}
+Third option was chosen to perform better convergence rate.
 
 \subsubsection*{Word2Vec.}
 The main problem of BOW model is the loss of context between words. Since in natural language, the permutation of even two words of a sentence can completely change the meaning, this classification approach may have low accuracy.
@@ -163,7 +163,7 @@ The results for BOW and Fast Text embeddings, are also introduced in table\,\ref
 
 \subsection{Aspects of algorithm implementation}
 \subsubsection*{Microservice architecture.}
-Since the service must operate under high loads, it is important to provide a robust architecture in which the failure of one component does not lead to the degradation of the entire system. The following client--server architecture is shown in figure\,\ref{fig:01}. Antispam daemon (mrasd) parses incoming messages and extracts text, images, and files from there. Since nested images and documents often contain junk data, it is also necessary to extract text from them. Then, documents are sent to the OCR service via a deferred redis queue, which extracts the text and stores the result in the redis cache.
+Since the service must operate under high loads, it is important to provide a robust architecture in which the failure of one component does not lead to the degradation of the entire system. The following client--server architecture is shown in figure\,\ref{fig:01}. Antispam daemon (mrasd) parses incoming messages and extracts text, images, and files from there. Since nested images and documents often contain junk data, it is also necessary to extract text from them. Then, documents are sent to the optical caracter recognition (OCR) service via a deferred redis queue, which extracts the text and stores the result in the redis cache.
 
 \begin{figure}[t]
 	\center
@@ -191,7 +191,7 @@ The proposed architecture is fairly robust because when the OCR of seris, one (o
 \end{figure}
 
 \subsubsection*{Brief review of the libraries}
-Since services require high performance, the C++ language (stl 17, grpc, boost) is chosen as one of the most productive modern languages. For data analysis and training of the {\bf\color{red}AST model}, the Python 3 language and the utouch framework were utilized due to the high efficiency and the possibility of conducting parallel calculations, both on the CPU and on the GPU cores of the machine.
+Since services require high performance, the C++ language (stl 17, grpc, boost) is chosen as one of the most productive modern languages. Python 3 language and pyTorch framework were utilized for data analysis and training due to the high efficiency and the possibility of conducting parallel calculations, both on the CPU and on the GPU cores of the machine.
 
 The fault tolerance of microservices is ensured by their deployment in the kubernetes (k8s) cluster, since if any pod falls for any reason. The requests are evenly balanced across the remaining live feeds, until the cluster independently returns to its previous state. 
 
@@ -228,11 +228,25 @@ Rami Mustafa A. Mohammad.
 2020. \emph{A lifelong spam emails 	classification model} //
 Applied Computing and Informatics
 
-\bibitem{Ref01} 
-{\bf\color{red} Ref01}
+\bibitem{Mikolov2013} 
+Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean.
+2013. \emph{Efficient Estimation of Word Representations in Vector Space} //
+arXiv:1301.3781v3
 
-\bibitem{Ref02} 
-{\bf\color{red} Ref02}
+\bibitem{Bojanowski2017} 
+Piotr Bojanowski, Edouard Grave, Armand Joulin, and Tomas Mikolov.
+2017. \emph{Enriching Word Vectors with Subword Information} //
+arXiv:1607.04606v2
+
+\bibitem{Bommannavar2014}
+Praveen Bommannavar, Alek Kolcz, Anand Rajaraman.
+2014. \emph{Recall Estimation for Rare Topic Retrieval from Large Corpuses} //
+2014 IEEE International Conference on Big Data
+
+\bibitem{Yang2014}
+Shuang Yang, Alek Kolcz, Andy Schlaikjer, Pankaj Gupta.
+2014. \emph{Large-scale high-precision topic modeling on twitter} // Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining
+
 \end{thebibliography}
 
 
