@@ -4,6 +4,9 @@
 \usepackage{graphicx}
 \usepackage{amsmath, amssymb}
 
+\usepackage{tikz}
+\usepackage{caption}
+
 \usepackage{xcolor}
 \definecolor{amaranth}{rgb}{0.9, 0.17, 0.31}
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
@@ -177,21 +180,48 @@ The results for BOW and Fast Text embeddings FCNN model are also introduced in t
 	\caption{\label{fig:01} Application architecture}
 \end{figure}
 
+
 \begin{figure}[b]
-	\center
-	\includegraphics[width=0.95\textwidth]{images/timings.png}
-	\caption{\label{fig:02} Average email processing time}	
+\centering
+
+\begin{tikzpicture}
+
+    \node (image) at (0,0) {
+        \includegraphics[width=0.95\textwidth]{images/timings.png}
+    };
+
+    \draw [opacity=0.5] (0, -2) node {time in hours};
+
+    \draw [opacity=0.5] (-7.8, 0) node {\rotatebox{90}{request time}};
+
+\end{tikzpicture}
+
+\caption{\label{fig:03} Average number of requests per minute from one of the farms}
+
 \end{figure}
 
-Since the service must operate under high loads, it is important to provide a robust architecture in which the failure of one component does not lead to the degradation of the entire system. The following client--server architecture is shown in figure\,\ref{fig:01}. Antispam daemon (mrasd) parses incoming messages and extracts text, images, and files from there. Since nested images and documents often contain junk data, it is also necessary to extract text from them. Then, documents are sent to the optical character recognition (OCR) service via a deferred redis queue, which extracts the text and stores the result in the redis cache.
-Since, highly likely the letter can be duplicated (for example, in the case of a ddos attack or offline rechecking), in order not to load the OCR service once again, the primary check of the redis cache is performed for the presence of already processed data for the specified document hash.
-After full text extraction, the mrasd service performs all the steps of text preprocessing (reduction to a single register, removal of stop words, normalization), and then sends the text to the mlapi service via the grpc protocol to vectorize the text using fast text and further obtain the FCNN prediction of the model by which a decision is made about the ``undesirability'' of the incoming message.
+Since the service must operate under high loads, it is important to provide a robust architecture in which the failure of one component does not lead to the degradation of the entire system. The following client--server architecture is shown in figure\,\ref{fig:01}. Antispam daemon (mrasd) parses incoming messages and extracts text, images, and files from there. Since nested images and documents often contain junk data, it is also necessary to extract text from them. Then, documents are sent to the optical character recognition (OCR) service via a deferred redis queue (arrow 1,2), which extracts the text and stores the result in the redis cache (arrow 3).
+Since, highly likely the letter can be duplicated (for example, in the case of a ddos attack or offline rechecking), in order not to load the OCR service once again, the primary check of the redis cache (arrow 1,4) is performed for the presence of already processed data for the specified document hash.
+After full text extraction, the mrasd service performs all the steps of text preprocessing (reduction to a single register, removal of stop words, normalization), and then sends the text to the mlapi service (arrow 5) via the grpc protocol to vectorize the text using fast text and further obtain the FCNN prediction of the model by which a decision is made about the ``undesirability'' of the incoming message.
 The proposed architecture is fairly robust because when the OCR of one (or several) instances of redis cluster fails, the entire system as a whole does not degrade.
  
-\begin{figure}[t]
-	\center
-	\includegraphics[width=0.95\textwidth]{images/processed_messages.png}
-	\caption{\label{fig:03} Average number of requests per minute from one of the farms}
+\begin{figure}
+\centering
+
+\begin{tikzpicture}
+
+    \node (image) at (0,0) {
+        \includegraphics[width=0.95\textwidth]{images/processed_messages.png}
+    };
+
+    \draw [opacity=0.5] (0, -2) node {time in hours};
+
+    \draw [opacity=0.5] (-7.8, 0) node {\rotatebox{90}{request per minute}};
+
+\end{tikzpicture}
+
+\caption{\label{fig:03} Average number of requests per minute from one of the farms}
+
 \end{figure}
 
 \subsubsection*{Brief review of the libraries.}
