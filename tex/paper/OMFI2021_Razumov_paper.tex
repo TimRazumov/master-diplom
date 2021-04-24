@@ -13,7 +13,7 @@
 
 \begin {document}
 \title{Application of convolutional neural networks in optical text recognition to junk data filtering}
-\author{Razumov T.E.$^1$, Churikov D.V.$^2$, Kravchenko O.V.$^3$}
+\author{Razumov T.E.$^1$, Churikov D.V.$^2$, Kravchenko O.V.$^{2,3}$}
 
 \address{
 $^1$\,Mail.ru Group, Leningradsky pr., 39--79, Moscow, 125167, Russian Federation\\
@@ -163,8 +163,8 @@ The fully convolutional neural network with 3 layers was considered. A \textsf{R
 $$
 g(x) = h_2 \left(\sum_{k=0}^{n_2} w''_k h_1\left(\sum_{j=0}^{n_1} w'_j h_0\left( \sum_{i=0}^{n_0} w_i x_i \right)\right)\right),
 $$
-where $h_i$ is the activation function for the corresponding layer. Adaptive moment estimation (Adam) method of gradient descent optimization algorithm is utilized to find weights $\{w_i\}$, $\{w'_j\}$, $\{w''_k\}$ at the model training stage.
-The results for BOW and Fast Text embeddings with \textsf{ReLU},\,\textsf{sigmoid} activation function and Adam method are also introduced in table\,\ref{tbl:02}.
+where $h_i$ is activation function for the corresponding layer. Adaptive moment estimation (Adam) method of gradient descent optimization algorithm is utilized to determine weights $\{w_i\}$, $\{w'_j\}$, $\{w''_k\}$ at the model training stage expet the last one.
+The results for BOW and Fast Text embeddings FCNN model are also introduced in table\,\ref{tbl:02}.
 
 
 \subsection{Aspects of algorithm implementation}
