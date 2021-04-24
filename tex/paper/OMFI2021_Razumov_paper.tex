@@ -13,15 +13,19 @@
 
 \begin {document}
 \title{Application of convolutional neural networks in optical text recognition to junk data filtering}
-\author{Razumov T.E., Churikov D.V., Kravchenko O.V.}
+\author{Razumov T.E.$^1$, Churikov D.V.$^2$, Kravchenko O.V.$^3$}
 
-\address{Production Editor, \jpcs, \iopp, Dirac House, Temple Back, Bristol BS1~6BE, UK}
+\address{
+$^1$\,Mail.ru Group, Leningradsky pr., 39--79, Moscow, 125167, Russian Federation\\
+$^2$\,Scientific and Technological Centre of Unique Instrumentation, Butlerova str., 15, Moscow, 117342, Russian Federation\\
+$^3$\,Federal Research Center ``Computer Science and Control'' of RAS, Vavilova st., 40, Moscow, 119333, Russian Federation
+}
 
-\ead{jacky.mucklow@iop.org}
+\ead{timofey.razumov@corp.mail.ru}
 
 
 \begin{abstract}
-	In this paper, the problem of constructing a model for detecting and filtering unwanted spam messages is solved. A fully connected convolutional neural network (\textsf{FCNN}) was chosen as the model of the classifier of unwanted emails in email. It allows you to divide emails into two categories: \emph{spam} and \emph{not spam}.
+	In this paper, the problem of constructing a model for detecting and filtering unwanted spam messages is solved. A fully connected convolutional neural network ({FCNN}) was chosen as the model of the classifier of unwanted emails in email. It allows you to divide emails into two categories: \emph{spam} and \emph{not spam}.
 	The main result of the research is a software application in the \textsf{C++} language, which has a micro-service architecture, and solves the problem of image classification. The app is able to handle more than $10 ^ 6 $ requests per minute in real time.
 \end{abstract}
 
@@ -38,7 +42,7 @@ Another approach is a classification one that include the support vector machine
 At the same time, filtering algorithms are usually stochastic \cite{Garg2021} and are used in combination with optimization techniques for some objective function. Various probabilistic models are used to solve the problem of email classification. One of the most commonly used approach is the naive Bayesian classifier. Other one is the particle swarm method is one of the numerical methods of stochastic optimization and it is used in data filtering problems, since it is not necessary to specify an analytical expression of the gradient of the optimized function. The particle swarm method refers to stochastic optimization methods and it is utilized for heuristic global optimization of the parameters of a naive Bayesian classifier. A complex approach using the naive Bayes algorithm together with the particle swarm optimization method was applied in \cite{Parmar2020}.
 The evolutionary model of spam classification is also presented in \cite{Mohammad2020}.
 
-The problem of detecting and filtering unwanted spam messages is investigated in present paper. A fully connected convolutional neural network (\textsf{FCNN}) is considered as a solution tool, which was chosen to classify junk email messages.
+The problem of detecting and filtering unwanted spam messages is investigated in present paper. A fully connected convolutional neural network ({FCNN}) is considered as a solution tool, which was chosen to classify junk email messages.
 
 
 \section{Methodology}
@@ -107,22 +111,21 @@ The main problem of BOW model is the loss of context between words. Since in nat
 Word2Vec is a text vectorization tool that takes into account the contextual relationship between words. The algorithm is based on huffman binary tree, skip--gram, negative sampling approaches. The bottle-necked place in Word2Vec is to find the context for the rare words.
 
 \subsubsection*{Fast Text.}
-FastText is a Word2Vec extension proposed by Facebook in 2016 {\bf\color{red}[ref01] \cite{Ref01}}. Fast Text approach splits the words into several n--grams (proverbs) Instead of considering individual words as an input of a neural network. After training the neural network, the embedding words for all n--grams from the training dataset arise.
-Applying such an approach, the solution becomes more sensitive to rare words, since it is highly likely that some of their n--grams are also presented in other words. Training the Fastext model takes longer time, but it works more precise than Word2Vec and allows to  represent rare words correctly.
+FastText is a Word2Vec extension proposed by Facebook in 2016 \cite{Mikolov2013,Bojanowski2017}. Fast Text approach splits the words into several $n$--grams (proverbs) Instead of considering individual words as an input of a neural network. After training the neural network, the embedding words for all $n$--grams from the training dataset arise.
+Applying such an approach, the solution becomes more sensitive to rare words, since it is highly likely that some of their $n$--grams are also presented in other words. Training the Fastext model takes longer time, but it works more precise than Word2Vec and allows to  represent rare words correctly.
 
 \subsection{Text classification}
 After text vectorization, a transform from a set of features to a set of classifiable objects $g: X \rightarrow Y$ is developed.
-According to the article {\bf\color{red}[ref: twitter threshold p. 4.6]\cite{Ref02}}, unique points were marked by bins and the optimal threshold accuracy $\alpha = 0.75$ was calculated, which provides optimal pressision and recall for our model and minimizes the error variance.
+According to the article \cite{Bommannavar2014,Yang2014}, unique points were marked by bins and the optimal threshold accuracy $\alpha = 0.75$ was calculated, which provides optimal pressision and recall for our model and minimizes the error variance.
 
 \subsubsection*{Logistic regression.}
 The common approach in the classification is to apply the logistic regression method
 $$
-g(x) = \left(1 + \exp{ \left( \sum_{i=0}^n w_i x_i  \right) }\right)^{-1},
+g(x) = \left(1 + \exp{ \left( \sum_{i=0}^n w_i x_i  \right) }\right)^{\!\!-1}\!\!\!\!,
 $$
 where $\mathbf{w}=(w_1,\ldots, w_N)^T$ are weights of the model arised in training process.
-
 Two different methods of text vectorization were examined experimentaly.
-The results for BOW and Fast Text embeddings, are introduced in table\,\ref{tbl:01}.
+The results for BOW and Fast Text embeddings with logistic regression, are introduced in table\,\ref{tbl:01}.
 
 \begin{table}[h!]
 	\centering
@@ -140,35 +143,38 @@ The results for BOW and Fast Text embeddings, are introduced in table\,\ref{tbl:
 \end{table}
 
 \subsubsection*{Fully convolutional neural network (FCNN).}
+
+\begin{table}[b]
+	\centering
+	\caption{\label{tbl:02}Training result.}
+	\begin{center}
+		\begin{tabular}{lll}
+			\br
+			embeddings & precision & recall \\
+			\mr
+			BOW & 0.93604 & 0.95643 \\ \hline
+			Fast Text & \bf 0.99931 & \bf 0.91263 \\ 
+			\br
+		\end{tabular}
+	\end{center}
+\end{table}
+
 The fully convolutional neural network with 3 layers was considered. A \textsf{ReLU} activation function was applied to the first and second layersthird, and the last one utilize \textsf{sigmoid} as an activation function. Data was regularized on each layer. Neural network can be defined as follows in our case
 $$
 g(x) = h_2 \left(\sum_{k=0}^{n_2} w''_k h_1\left(\sum_{j=0}^{n_1} w'_j h_0\left( \sum_{i=0}^{n_0} w_i x_i \right)\right)\right),
 $$
-where $h_i$ is the activation function for the corresponding layer. Adam method is utilized to find weights $\{w_i\}$, $\{w'_j\}$, $\{w''_k\}$ at the model training stage.
-The results for BOW and Fast Text embeddings, are also introduced in table\,\ref{tbl:02}.
-\begin{table}[h!]
-	\centering
-	\caption{\label{tbl:02}Training result.}
-	\begin{center}
-	\begin{tabular}{lll}
-		\br
-		embeddings & precision & recall \\
-		\mr
-		BOW & 0.93604 & 0.95643 \\ \hline
-		Fast Text & \bf 0.99931 & \bf 0.91263 \\ 
-		\br
-	\end{tabular}
-	\end{center}
-\end{table}
+where $h_i$ is the activation function for the corresponding layer. Adaptive moment estimation (Adam) method of gradient descent optimization algorithm is utilized to find weights $\{w_i\}$, $\{w'_j\}$, $\{w''_k\}$ at the model training stage.
+The results for BOW and Fast Text embeddings with \textsf{ReLU},\,\textsf{sigmoid} activation function and Adam method are also introduced in table\,\ref{tbl:02}.
+
 
 \subsection{Aspects of algorithm implementation}
+
 \subsubsection*{Microservice architecture.}
-Since the service must operate under high loads, it is important to provide a robust architecture in which the failure of one component does not lead to the degradation of the entire system. The following client--server architecture is shown in figure\,\ref{fig:01}. Antispam daemon (mrasd) parses incoming messages and extracts text, images, and files from there. Since nested images and documents often contain junk data, it is also necessary to extract text from them. Then, documents are sent to the optical caracter recognition (OCR) service via a deferred redis queue, which extracts the text and stores the result in the redis cache.
 
 \begin{figure}[t]
 	\center
 	\includegraphics[width=0.95\textwidth]{images/deploy.jpg}
-	\caption{\label{fig:01} Deploy}
+	\caption{\label{fig:01} Application architecture}
 \end{figure}
 
 \begin{figure}[b]
@@ -177,12 +183,10 @@ Since the service must operate under high loads, it is important to provide a ro
 	\caption{\label{fig:02} Average email processing time}	
 \end{figure}
 
-
+Since the service must operate under high loads, it is important to provide a robust architecture in which the failure of one component does not lead to the degradation of the entire system. The following client--server architecture is shown in figure\,\ref{fig:01}. Antispam daemon (mrasd) parses incoming messages and extracts text, images, and files from there. Since nested images and documents often contain junk data, it is also necessary to extract text from them. Then, documents are sent to the optical character recognition (OCR) service via a deferred redis queue, which extracts the text and stores the result in the redis cache.
 Since, highly likely the letter can be duplicated (for example, in the case of a ddos attack or offline rechecking), in order not to load the OCR service once again, the primary check of the redis cache is performed for the presence of already processed data for the specified document hash.
-
-After full text extraction, the mrasd service performs all the steps of text preprocessing (reduction to a single register, removal of stop words, normalization), and then sends the text to the mlapi service via the grpc protocol to vectorize the text using fast text and further obtain the fcnn prediction of the model by which a decision is made about the ``undesirability'' of the incoming message.
-
-The proposed architecture is fairly robust because when the OCR of seris, one (or several) instances of redis cluster fails, the entire system as a whole does not degrade.
+After full text extraction, the mrasd service performs all the steps of text preprocessing (reduction to a single register, removal of stop words, normalization), and then sends the text to the mlapi service via the grpc protocol to vectorize the text using fast text and further obtain the FCNN prediction of the model by which a decision is made about the ``undesirability'' of the incoming message.
+The proposed architecture is fairly robust because when the OCR of one (or several) instances of redis cluster fails, the entire system as a whole does not degrade.
  
 \begin{figure}[t]
 	\center
@@ -190,62 +194,62 @@ The proposed architecture is fairly robust because when the OCR of seris, one (o
 	\caption{\label{fig:03} Average number of requests per minute from one of the farms}
 \end{figure}
 
-\subsubsection*{Brief review of the libraries}
+\subsubsection*{Brief review of the libraries.}
 Since services require high performance, the C++ language (stl 17, grpc, boost) is chosen as one of the most productive modern languages. Python 3 language and pyTorch framework were utilized for data analysis and training due to the high efficiency and the possibility of conducting parallel calculations, both on the CPU and on the GPU cores of the machine.
-
 The fault tolerance of microservices is ensured by their deployment in the kubernetes (k8s) cluster, since if any pod falls for any reason. The requests are evenly balanced across the remaining live feeds, until the cluster independently returns to its previous state. 
 
 \section{Conclusions}
 
 The results obtained during the training of the model on real--life streaming data of users are introduced. Based on these data, one can realize that FCNN model based on Fast Text embeddings has higher classification accuracy rather then method of classical logistic regression and FCNN  model based on a bag of words.
 
-A high--performance fault--tolerant microservice architecture is presented, which can withstand an average of more than $10^6$  requests per minute. At the same time, the degradation of a specific component, machine, or data center does not lead to complete inactivity of the application.
+A high--performance fault--tolerant microservice architecture is presented, which is able to withstand an average of more than $10^6$ requests per minute. The developed solution is robust. Thus, the degradation of a specific component, machine, or data center does not lead to complete inactivity of the application.
 
 \section*{References}
 \begin{thebibliography}{99}
 \bibitem{Makkar2021} 
-Aaisha Makkar, Uttam Ghosh, Pradip Kumar Sharma.
-2021. \emph{Artificial Intelligence and Edge Computing-enabled
-	Web Spam Detection for Next Generation IoT
-	Applications} // IEEE Sensors Journal
+Aaisha M, Uttam G, Pradip K S
+2021 {Artificial intelligence and edge computing--enabled
+	web spam detection for next generation IoT
+	applications} {\it IEEE Sensors Journal} {\bf } pp 1--9
 
 \bibitem{Taylor2020}
-Taylor O.E., Ezekiel P.S.
-2020. \emph{A Model to Detect Spam Email Using Support Vector Classifier and Random Forest Classifier} //
-International Journal of Computer Science and Mathematical Theory
+Taylor O E, Ezekiel P S
+2020 {A model to detect spam email using support vector classifier and random forest classifier} 
+\emph{Int. J. Comput. Sci. Math. Theory} {\bf 6} 1 pp 1--11
 
 \bibitem{Garg2021}
-Pranjul Garg, Nancy Girdhar.
-2021. \emph{A systematic review on spam filtering techniques based on
-natural language processing framework} // 2021 11th International Conference on Cloud Computing, Data Science \& Engineering (Confluence 2021)
+Pranjul G, Nancy G
+2021 {A systematic review on spam filtering techniques based on
+natural language processing framework} \emph{2021 11th International Conference on Cloud Computing, Data Science \& Engineering (Confluence 2021)} pp 30--35
 
 \bibitem{Parmar2020}
-Nandan Parmar, Ankita Sharma, Harshita Jain, Amol K. Kadam.
-2020. \emph{Email Spam Detection using Naïve Bayes and Particle Swarm Optimization} // IJIRT
+Nandan P, Ankita S, Harshita J, Amol K K
+2020 {Email spam detection using naïve Bayes and particle swarm optimization} \emph{Int. J. Inn. Res. Tech.} {\bf 6} 10 pp 367--373
 
 \bibitem{Mohammad2020}
-Rami Mustafa A. Mohammad.
-2020. \emph{A lifelong spam emails 	classification model} //
-Applied Computing and Informatics
+Mohammad RMA
+2020 \emph{A lifelong spam emails classification model}
+\emph{Appl. Comp. and Inf.} pp 1--20
 
 \bibitem{Mikolov2013} 
-Tomas Mikolov, Kai Chen, Greg Corrado, Jeffrey Dean.
-2013. \emph{Efficient Estimation of Word Representations in Vector Space} //
+Mikolov T, Chen K, Corrado G, and Dean J
+2013 {Efficient estimation of word representations in vector space} 
 arXiv:1301.3781v3
 
 \bibitem{Bojanowski2017} 
-Piotr Bojanowski, Edouard Grave, Armand Joulin, and Tomas Mikolov.
-2017. \emph{Enriching Word Vectors with Subword Information} //
+Bojanowski P, Grave E, Joulin A, and Mikolov T
+2017 {Enriching word vectors with subword information} 
 arXiv:1607.04606v2
 
 \bibitem{Bommannavar2014}
-Praveen Bommannavar, Alek Kolcz, Anand Rajaraman.
-2014. \emph{Recall Estimation for Rare Topic Retrieval from Large Corpuses} //
-2014 IEEE International Conference on Big Data
+Bommannavar P, Kolcz A, Rajaraman A
+2014 {Recall estimation for rare topic retrieval from large corpuses}
+\emph{2014 IEEE International Conference on Big Data}
 
 \bibitem{Yang2014}
-Shuang Yang, Alek Kolcz, Andy Schlaikjer, Pankaj Gupta.
-2014. \emph{Large-scale high-precision topic modeling on twitter} // Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining
+Yang S, Kolcz A, Schlaikjer A, and Gupta P
+2014 {Large--scale high-precision topic modeling on twitter} 
+\emph{Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining} pp 1907--1916
 
 \end{thebibliography}
 
