@@ -146,7 +146,7 @@ The results for BOW and Fast Text embeddings with logistic regression, are intro
 
 \begin{table}[h!]
 	\centering
-	\caption{\label{tbl:01}Training result.}
+	\caption{\label{tbl:01}Training result}
 	\begin{center}
 		\begin{tabular}{lll}
 			\br
@@ -170,7 +170,7 @@ The results for BOW and Fast Text embeddings FCNN model are also introduced in t
 
 \begin{table}[h!]
 	\centering
-	\caption{\label{tbl:02}Training result.}
+	\caption{\label{tbl:02}Training result}
 	\begin{center}
 		\begin{tabular}{lll}
 			\br
@@ -190,13 +190,14 @@ The results for BOW and Fast Text embeddings FCNN model are also introduced in t
 
 Since the service must operate under high loads, it is important to provide a robust architecture in which the failure of one component does not lead to the degradation of the entire system. The following client--server architecture is shown in figure\,\ref{fig:01}. Antispam daemon (mrasd) parses incoming messages and extracts text, images, and files from there. Since nested images and documents often contain junk data, it is also necessary to extract text from them. Then, documents are sent to the optical character recognition (OCR) service via a deferred redis queue, which extracts the text and stores the result in the redis cache.
 Since, highly likely the letter can be duplicated (for example, in the case of a ddos attack or offline rechecking), in order not to load the OCR service once again, the primary check of the redis cache is performed for the presence of already processed data for the specified document hash.
+Some other options of noisy images processing related to OCR problem were introduced earlier in \cite{Churikov2004,Kravchenko2005}.
 After full text extraction, the mrasd service performs all the steps of text preprocessing (reduction to a single register, removal of stop words, normalization), and then sends the text to the mlapi service via the grpc protocol to vectorize the text using fast text and further obtain the FCNN prediction of the model by which a decision is made about the ``undesirability'' of the incoming message.
 The proposed architecture is fairly robust because when the OCR of one (or several) instances of redis cluster fails, the entire system as a whole does not degrade. Features of quality and quantity of the proposed system are shown in figures~\ref{fig:02},\,\ref{fig:03}.
 
 \begin{figure}[h!]
 	\center
 	\includegraphics[width=0.8\textwidth]{images/deploy.jpg}
-	\caption{\label{fig:01} Application architecture}
+	\caption{\label{fig:01} Application architecture.}
 \end{figure}
 
 %%<<<<<<< HEAD
@@ -218,16 +219,16 @@ The proposed architecture is fairly robust because when the OCR of one (or sever
 \begin{tikzpicture}
 
     \node (image) at (0,0) {
-        \includegraphics[width=0.95\textwidth]{images/timings.png}
+        \includegraphics[width=0.99\textwidth]{images/timings1.png}
     };
 
-    \draw [opacity=0.5] (0, -2) node {time in hours};
+    \draw [opacity=0.5] (0, -1.6) node {time in hours};
 
-    \draw [opacity=0.5] (-7.8, 0) node {\rotatebox{90}{request time}};
+    \draw [opacity=0.5] (-8.15, 0) node {\rotatebox{90}{request time}};
 
 \end{tikzpicture}
 
-\caption{\label{fig:02} Average email processing time}
+\caption{\label{fig:02} Average email processing time.}
 
 \end{figure}
 
@@ -242,16 +243,16 @@ The proposed architecture is fairly robust because when the OCR of one (or sever
 \begin{tikzpicture}
 
     \node (image) at (0,0) {
-        \includegraphics[width=0.95\textwidth]{images/processed_messages.png}
+        \includegraphics[width=0.99\textwidth]{images/processed_messages1.png}
     };
 
-    \draw [opacity=0.5] (0, -2) node {time in hours};
+    \draw [opacity=0.5] (0, -1.6) node {time in hours};
 
-    \draw [opacity=0.5] (-7.8, 0) node {\rotatebox{90}{request per minute}};
+    \draw [opacity=0.5] (-8.15, 0) node {\rotatebox{90}{request per minute}};
 
 \end{tikzpicture}
 
-\caption{\label{fig:03} Average number of requests per minute from one of the farms}
+\caption{\label{fig:03} Average number of requests per minute from one of the farms.}
 
 %>>>>>>> b4a7605f38c293c05327fdf168e9f6fdc80b94a3
 \end{figure}
@@ -312,6 +313,15 @@ Bommannavar P, Kolcz A, Rajaraman A
 Yang S, Kolcz A, Schlaikjer A, and Gupta P
 2014 {Large--scale high-precision topic modeling on twitter} 
 \emph{Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining} pp 1907--1916
+
+\bibitem{Churikov2004} Churikov D V 2004
+{Atomic functions and combined algorithm of image filtration in conditions of high intensity noise}
+\emph{Radiotekhnika} \textbf{9} pp 69--71. In Russian.
+
+\bibitem{Kravchenko2005}
+Kravchenko V F, Fedorov I V, Churikov D V and Rvachev V L 2005 
+{R--functions and the atomic functions in problems of complex--shaped contour objects description and digital image processing}
+\emph{EW \& ES} \textbf{10} (7) pp 70--80. In Russian.
 
 \end{thebibliography}
 
