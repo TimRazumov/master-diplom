@@ -143,7 +143,7 @@
 
 
 \newpage
-\section{ОСНОВНЫЕ СВЕДЕНЬЯ ТЕОРИИ МАШИННОГО ОБУЧЕНИЯ}
+\section{ОСНОВНЫЕ СВЕДЕНИЯ}
 
 \subsection{Объекты и признаки}
 
@@ -494,6 +494,8 @@ FastText --- это расширение Word2Vec, предложенное Facebook в 2016 году. Вместо 
 
 \subsection{Логистическая регрессия}
 
+\subsubsection{Описание работы алгоритма}
+
 Метод логистической регрессии основан на довольно сильных вероятностных предположениях, которые имеют сразу несколько интересных последствий. Во-первых, линейный алгоритм классификации оказывается оптимальным байесовским
 классификатором. Во-вторых, однозначно определяется функция потерь. В-третьих,
 возникает интересная дополнительная возможность наряду с классификацией объекта получать численные оценки вероятности его принадлежности каждому из классов.
@@ -536,6 +538,9 @@ $$
 где $ \sigma(z) = \dfrac{1}{1+ e^{-z}}$ — сигмоидная функция
 
 \end{itemize}
+
+
+\subsubsection{Результаты расчетов}
 
 Для BOW и Fast Text эмбедингов мы имеем следующие метрики классификации:
 \begin{center}
@@ -694,6 +699,51 @@ $$
   \end{tabular}
 \end{center}
 
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=0.65]{dist_prob.jpg}
+	\caption{Распределение вероятностей классификатора}
+	\label{fig:02}
+\end{figure}
+
+\subsection{Сравнение моделей}
+
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=0.75]{old_vs_new_fp.jpg}
+	\caption{Сравнение жалоб на старый и новый классификатор}
+	\label{fig:02}
+\end{figure}
+
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=0.75]{old_vs_new_ps.jpg}
+	\caption{Сравнение блокировок старого и нового классификатора}
+	\label{fig:02}
+\end{figure}
+
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=0.75]{old_vs_new_status.jpg}
+	\caption{Сравнение статусов старого и нового классификатора}
+	\label{fig:02}
+\end{figure}
+
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=0.75]{is_not_spam_yeas_2_yeas.jpg}
+	\caption{Количество жалоб "это не спам" за этот и прошлый год}
+	\label{fig:02}
+\end{figure}
+
+
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=0.75]{is_spam_yeas_2_yeas.jpg}
+	\caption{Количество жалоб "это спам" за этот и прошлый год}
+	\label{fig:02}
+\end{figure}
+
 
 \newpage
 \section{ПОСТРОЕНИЕ МИКРОСЕРВИСНОЙ АРХИТЕКТУРЫ}
@@ -717,7 +767,7 @@ $$
 \begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.25]{deploy.jpg}
-	\caption{Deploy}
+	\caption{Архитектура приложения}
 	\label{fig:02}
 \end{figure}
 
