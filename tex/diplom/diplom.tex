@@ -682,11 +682,11 @@ $$
 
 Для BOW и Fast Text эмбедингов мы имеем следующие метрики классификации:
 \begin{center}
-  \begin{tabular}{ | c | c | c |}
+  \begin{tabular}{ | c | c | c | c | c |}
     \hline
-               & precision & recall \\ \hline
-     BOW       & 0.91143 & 0.99961 \\ \hline
-     Fast Text & 0.95523 & 0.89164  \\ \hline
+               & precision & recall & accuracy & $f_1$ \\ \hline
+     BOW       & 0.91143 & 0.99961 & & \\ \hline
+     Fast Text & 0.95523 & 0.89164 & & \\ \hline
   \end{tabular}
 \end{center}
 
@@ -816,50 +816,49 @@ $$
 
 \subsubsection{Выбор параметров и результаты расчетов}
 
-Fully convolutional neural network для нашей задачи имеет 3 слоя. На первых двух используется функция активации $ReLU$, на последнем $Sigmoid$. На каждом слое производится регуляризация данных. В нашем случае нейронную сеть можно определить формулой:
+Полносвязная нейронная сеть для нашей задачи имеет 3 слоя. На каждом слое производится регуляризация данных. В нашем случае нейронную сеть можно определить формулой:
 
 $$
 g(x) = h_2 \left(\sum_{k=0}^{n_2} w''_k h_1\left(\sum_{j=0}^{n_1} w'_j h_0\left( \sum_{i=0}^{n_0} w_i x_i \right)\right)\right),
 $$
-
-где $h_i$ --- функция активации для соответствующего слоя. Для нахождения весов $\{w_i\}$, $\{w'_j\}$, $\{w''_k\}$ на этапе обучения модели используется метод Адама.
+где $h_i$ --- функция активации для соответствующего слоя. Для нахождения весов $\{w_i\}_{i=0}^{n_0}$, $\{w'_j\}_{j=0}^{n_1}$, $\{w''_k\}_{k=0}^{n_2}$ на этапе обучения модели используется градиентный метод Адама.
 
 Для BOW и Fast Text эмбедингов мы имеем следующие метрики классификации:
 \begin{center}
-  \begin{tabular}{ | c | c | c |}
+  \begin{tabular}{ | c | c | c | c | c |}
     \hline
-               & precision & recall \\ \hline
-     BOW       & 0.93604 & 0.95643 \\ \hline
-     Fast Text & 0.99931 & 0.91263 \\ \hline
+               & precision & recall & accuracy & $f_1$ \\ \hline
+     BOW       & 0.93604 & 0.95643 & & \\ \hline
+     Fast Text & 0.99931 & 0.91263 & & \\ \hline
   \end{tabular}
 \end{center}
-
+На рис. \ref{fig:train_loss} отражена сходимость функции потерь на тренировочных данных, коррелирующая с ростом precision (рис. \ref{fig:train_precision}). На рис. отображены результаты валидации модели на тестовых данных. Анализируя эти графики можно сделать вывод, что не смотря на большое количество итераций требуемых для обучения модели, алгоритм является сходящимся минуя эффект переобучения. 
 \begin{figure}[H]
 	\center
 	\includegraphics[scale=1.5]{train_loss.jpg}
-	\caption{Количество жалоб "это не спам" за этот и прошлый год}
-	\label{fig:is_not_spam_yeas_2_yeas}
+	\caption{Изменение функции потерь на тренировочной выборке}
+	\label{fig:train_loss}
 \end{figure}
 
 \begin{figure}[H]
 	\center
 	\includegraphics[scale=1.5]{train_precision.jpg}
-	\caption{Количество жалоб "это не спам" за этот и прошлый год}
-	\label{fig:is_not_spam_yeas_2_yeas}
+	\caption{Изменение precision на тренировочной выборке}
+	\label{fig:train_precision}
 \end{figure}
 
 \begin{figure}[H]
 	\center
 	\includegraphics[scale=1.5]{test_loss.jpg}
-	\caption{Количество жалоб "это не спам" за этот и прошлый год}
-	\label{fig:is_not_spam_yeas_2_yeas}
+	\caption{Изменение функции потерь на тестовой выборке}
+	\label{fig:test_loss}
 \end{figure}
 
 \begin{figure}[H]
 	\center
 	\includegraphics[scale=1.5]{test_precision.jpg}
-	\caption{Количество жалоб "это не спам" за этот и прошлый год}
-	\label{fig:is_not_spam_yeas_2_yeas}
+	\caption{Изменение precision на тестовой выборке}
+	\label{fig:test_precision}
 \end{figure}
 
 На рис. \ref{fig:dist_prob} отображенно распределние вероятностей классификатора с шагом $0.1$ на реальных потоковых письмах пользователей. Метрики $ham$ и $spam$ отображают колличество писем, отмеченных классификатором как "не спам" и "спам" соответственно.
