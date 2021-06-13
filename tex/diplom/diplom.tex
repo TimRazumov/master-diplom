@@ -847,28 +847,28 @@ x, & x > 0, \\
   \end{tabular}
 \end{center}
 На рис. \ref{fig:train_loss} отражена сходимость функции потерь на тренировочных данных, коррелирующая с ростом precision (рис. \ref{fig:train_precision}). На рис. \ref{fig:test_loss}, \ref{fig:test_precision} отображены результаты валидации модели на тестовых данных. Анализируя эти графики можно сделать вывод, что не смотря на большое количество итераций требуемых для обучения модели, алгоритм является сходящимся минуя эффект переобучения. 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=1.5]{train_loss.jpg}
 	\caption{Изменение функции потерь на тренировочной выборке}
 	\label{fig:train_loss}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=1.5]{train_precision.jpg}
 	\caption{Изменение precision на тренировочной выборке}
 	\label{fig:train_precision}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=1.5]{test_loss.jpg}
 	\caption{Изменение функции потерь на тестовой выборке}
 	\label{fig:test_loss}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=1.5]{test_precision.jpg}
 	\caption{Изменение precision на тестовой выборке}
@@ -877,7 +877,7 @@ x, & x > 0, \\
 
 На рис. \ref{fig:dist_prob} отображенно распределние вероятностей классификатора с шагом $0.1$ на реальных потоковых письмах пользователей. Метрики $ham$ и $spam$ отображают колличество писем, отмеченных классификатором как "не спам" и "спам" соответственно.
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.65]{dist_prob.jpg}
 	\caption{Распределение вероятностей классификатора}
@@ -891,7 +891,7 @@ x, & x > 0, \\
 
 На рис. \ref{fig:old_vs_new_fp} отображено колличество жалоб на старый и новый классификатор за сутки. Из него видно, что на новый классификатор пользователи жалуются почти в 2.5 раза меньше.
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.65]{old_vs_new_fp.jpg}
 	\caption{Сравнение жалоб на старый и новый классификатор}
@@ -900,7 +900,7 @@ x, & x > 0, \\
 
 На рис. \ref{fig:old_vs_new_ps} отображено колличество писем, которые старый и новый классификатор отметили как "спам" за сутки. Анализируя графики на рис. \ref{fig:old_vs_new_fp} и рис. \ref{fig:old_vs_new_ps} можно увидеть, что новый классификатор работает существенно лучше старого, за счет того, что он блокирует в 1.5 раза больше писем, при этом на его решения поступает в 2.5 раза меньше жалоб.
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.65]{old_vs_new_ps.jpg}
 	\caption{Сравнение блокировок старого и нового классификатора}
@@ -909,7 +909,7 @@ x, & x > 0, \\
 
 На рис. \ref{fig:old_vs_new_status} отображено пересечение статусов старого и нового классификатора за сутки. Метрика $spam2ham$ отображает количество писем, которые старый классификатор отметил как $spam$, а новый как $ham$ (не спам). Метрика $ham2spam$ наоборот, показывает сколько писем старый классификатор отметил как $ham$, а новый отправил в $spam$. В метрике $spam2spam$ оба классификатора сочли письмо спамом. Из данного графика видно, что классификаторы имеют достаточно сильное перечение (около 60\%), но при этом отличаются в части блокировок, что вносит ключевой эффект на количество жалоб на рис. \ref{fig:old_vs_new_fp}.
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.75]{old_vs_new_status.jpg}
 	\caption{Сравнение статусов старого и нового классификатора}
@@ -917,14 +917,14 @@ x, & x > 0, \\
 \end{figure}
 
 На рис. \ref{fig:is_not_spam_yeas_2_yeas} и рис. \ref{fig:is_spam_yeas_2_yeas} отображено общее количество жалоб пользователей на письма попавашие в спам по ошибке и наборот, на спам, который попал во входящие за этот и прошлый год. Из графиков видно, что количество жалоб существенно снизилось относительно прошлого года, в том числе благодаря новому классификатору.
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.7]{is_not_spam_yeas_2_yeas.jpg}
 	\caption{Количество жалоб ``это не спам'' за этот и прошлый год}
 	\label{fig:is_not_spam_yeas_2_yeas}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.65, width=16cm]{is_spam_yeas_2_yeas.jpg}
 	\caption{Количество жалоб "это спам" за этот и прошлый год}
@@ -945,7 +945,7 @@ x, & x > 0, \\
 
 Так как сервис должен работать под высокими нагрузками важно обеспечить архитектуру, при которой выход из строя одной компоненты не приведет к деградации всей системы. Реализована следующая клиент-серверная архитектура (рис. \ref{fig:app_arch}). Antispam daemon (mrasd) парсит входящие сообщение и извлекает оттуда текст, изображения, файлы.  Поскольку нежелательные данные часто содержатся внутри вложенных изображений и документов, то из них также необходимо извлечь текст. Для этого через отложенную redis очередь документы оправляются в OCR сервис, который извлекает текст и сохраняет результат в redis cache.
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.25]{deploy.jpg}
 	\caption{Архитектура приложения}
@@ -959,49 +959,49 @@ x, & x > 0, \\
 Предложенная архитектура хороша тем, что при выходе из строя OCR сериса, одного (или нескольких) инстансов redis сluster, не деградирует вся система в целом.
 
 \subsection{Результаты работы приложения}
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.6]{timings.png}
 	\caption{Среднее время обработки письма}
 	\label{fig:timings}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.5]{processed_messages.png}
 	\caption{Среднее количество запросов в минуту с одной из ферм}
 	\label{fig:processed_messages}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=1.0]{pdf_flow.jpg}
 	\caption{Поток pdf в сервис ocr}
 	\label{fig:pdf_flow}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=1.0]{image_flow.jpg}
 	\caption{Поток изображений в сервис ocr}
 	\label{fig:image_flow}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.8]{extract_time.jpg}
 	\caption{Среднее время обработки изображения сервисом ocr}
 	\label{fig:ocr_time}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.8]{mlapi_flow.jpg}
 	\caption{Количество запросов в сервис mlapi}
 	\label{fig:mlapi_flow}
 \end{figure}
 
-\begin{figure}[H]
+\begin{figure}[h!]
 	\center
 	\includegraphics[scale=0.8]{mlapi_time.jpg}
 	\caption{Среднее время ответа на запрос сервисом mlapi}
@@ -1011,7 +1011,7 @@ x, & x > 0, \\
 \newpage
 \section-{ЗАКЛЮЧЕНИЕ}
 
-В данной работе приведены результаты, полученные в ходе обучения модели на реальных потоковых данных пользователей. По приведенным данным можно сделать заключение о том, что $FCNN$ модель на основе $Fast Text$ эмбедингов имеет наивысшую точность классификации, по сравнению с методами классической логистической регрессии и $FCNN$ модели на основе мешка слов.
+В данной работе приведены результаты, полученные в ходе обучения модели на реальных потоковых данных пользователей. По приведенным данным можно сделать заключение о том, что $FCNN$ модель на основе $fast$ $text$ эмбедингов имеет наивысшую точность классификации, по сравнению с методами классической логистической регрессии и $FCNN$ модели на основе мешка слов.
 
 
 Приведена высокопризводительная отказоустойчивая микросервисная архитектура, которая выдерживает в среднем более $10^6$ запросов в минуту. При этом деградация конкретной компоненты, машины или датацентра не приводит к полной неработоспособности приложения.
