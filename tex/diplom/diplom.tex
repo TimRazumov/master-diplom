@@ -6,6 +6,7 @@
 \usepackage{hyperref}
 \usepackage{graphicx}
 \usepackage{caption}
+\usepackage{listings}
 \usepackage[footnotes,oglav,spisok,boldsect,eqwhole,kursrab,remarks,hyperprint]{project}
 
 \usepackage{hhline}
@@ -34,6 +35,32 @@
 \definecolor{amaranth}{rgb}{0.9, 0.17, 0.31}
 \definecolor{amethyst}{rgb}{0.6, 0.4, 0.8}
 \definecolor{ao}{rgb}{0.0, 0.0, 1.0}
+
+\definecolor{codegreen}{rgb}{0,0.6,0}
+\definecolor{codegray}{rgb}{0.5,0.5,0.5}
+\definecolor{codepurple}{rgb}{0.58,0,0.82}
+\definecolor{backcolour}{rgb}{0.95,0.95,0.92}
+
+\lstdefinestyle{codestyle}{
+    backgroundcolor=\color{backcolour},   
+    commentstyle=\color{codegreen},
+    keywordstyle=\color{magenta},
+    numberstyle=\tiny\color{codegray},
+    stringstyle=\color{codepurple},
+    basicstyle=\ttfamily\footnotesize,
+    breakatwhitespace=false,         
+    breaklines=true,                 
+    captionpos=b,                    
+    keepspaces=true,                 
+    numbers=left,                    
+    numbersep=5pt,                  
+    showspaces=false,                
+    showstringspaces=false,
+    showtabs=false,                  
+    tabsize=2
+}
+
+\lstset{style=codestyle}
 
 \graphicspath{ {./images/} }
 
@@ -107,7 +134,7 @@
 \newpage
 \section-{АННОТАЦИЯ}
 
-В настоящей работе решается задача построения модели для обнаружения и фильтрации нежелательных спам-сообщений. В качестве модели классификатора нежелательных писем в электронной почте выбрана полносвязная свёрточная нейронная сеть (\textsf{FCNN}). Она позволяет разделить письма на две категории: \emph{спам} и \emph{не спам}. 
+В настоящей работе решается задача построения модели для обнаружения и фильтрации нежелательных спам-сообщений. В качестве модели классификатора нежелательных писем в электронной почте выбрана полносвязная свёрточная нейронная сеть ($FCNN$). Она позволяет разделить письма на две категории: \emph{спам} и \emph{не спам}. 
 
 Основным результатом исследования является программное приложение на языке \textsf{C++}, имеющее микро-сервисную архитектуру, и решающее задачу классификации писем. Приложение способно выдерживать более $10^6$ запросов в минуту в режиме реального времени.
 
@@ -933,7 +960,7 @@ x, & x > 0, \\
 
 
 \newpage
-\section{ПОСТРОЕНИЕ МИКРОСЕРВИСНОЙ АРХИТЕКТУРЫ}
+\section{ПОСТРОЕНИЕ АРХИТЕКТУРЫ ПРИЛОЖЕНИЯ}
 
 \subsection{Обзор библиотек}
 
@@ -941,7 +968,7 @@ x, & x > 0, \\
 
 Отказоустойчивость микросервисов обеспечивается за счет их развертки в kubernetes (k8s) кластере, так как при падении любого пода по какой-либо причине запросы равномерно сбалансируются по оставшимся живым подам, до тех пор, пока кластер самостоятельно не вернется к прежнему состоянию. Внутри него можно настроить: автоматическую балансировку нагрузки с помощью постоянного мониторинга сведений о производительности и используемых ресурсах (autoscaling) и грамотное размещение подов внутри кластера по дата центрам (affinity).
 
-\subsection{Построение архитектуры приложения}
+\subsection{Построение микросервисной архитектуры}
 
 Так как сервис должен работать под высокими нагрузками важно обеспечить архитектуру, при которой выход из строя одной компоненты не приведет к деградации всей системы. Реализована следующая клиент-серверная архитектура (рис. \ref{fig:app_arch}). Antispam daemon (mrasd) парсит входящие сообщение и извлекает оттуда текст, изображения, файлы.  Поскольку нежелательные данные часто содержатся внутри вложенных изображений и документов, то из них также необходимо извлечь текст. Для этого через отложенную redis очередь документы оправляются в OCR сервис, который извлекает текст и сохраняет результат в redis cache.
 
@@ -959,12 +986,8 @@ x, & x > 0, \\
 Предложенная архитектура хороша тем, что при выходе из строя OCR сериса, одного (или нескольких) инстансов redis сluster, не деградирует вся система в целом.
 
 \subsection{Результаты работы приложения}
-\begin{figure}[h!]
-	\center
-	\includegraphics[scale=0.6]{timings.png}
-	\caption{Среднее время обработки письма}
-	\label{fig:timings}
-\end{figure}
+
+На рис. \ref{fig:processed_messages} отображено среднее количество обрабатываемых сообщений для одной из ферм спам-фильтра в течении суток. На рис. \ref{fig:timings} отражено среднее время обработки одного письма в течении суток. Из приведенных графиков видно, что не смотря на высокую нагрузку в течении суток система успешно справяелся с обработкой потоковых данных в среднем менее, чем за 500 мс. 
 
 \begin{figure}[h!]
 	\center
@@ -972,6 +995,15 @@ x, & x > 0, \\
 	\caption{Среднее количество запросов в минуту с одной из ферм}
 	\label{fig:processed_messages}
 \end{figure}
+
+\begin{figure}[h!]
+	\center
+	\includegraphics[scale=0.6]{timings.png}
+	\caption{Среднее время обработки письма}
+	\label{fig:timings}
+\end{figure}
+
+На рис. \ref{fig:pdf_flow}, \ref{fig:image_flow} отображено среднее количество отправляемых pdf и изображений в сервис ocr для распознования. На рис. \ref{fig:ocr_time} демонстрируется время обработки и извлечение текста сервисом ocr. Анализируя эти графики можно увидеть сильную неоднородность потока изображений и pdf в течении суток, но несмотря на это достаточно быстрое время отклика от сервиса ocr, во многом благодаря распределенной системе построенной на redis очереди.
 
 \begin{figure}[h!]
 	\center
@@ -993,6 +1025,8 @@ x, & x > 0, \\
 	\caption{Среднее время обработки изображения сервисом ocr}
 	\label{fig:ocr_time}
 \end{figure}
+
+На рис. \ref{fig:mlapi_flow}, отображено среднее количество запросов в сервис mlapi. В их число входят запросы на векторизацию текста и на предсказания модели. На рис. \ref{fig:mlapi_time} отражено среднее время отклика сервисом mlapi. Из приведенных графиков также видно, что не смотря на большую потоковую нагрузку сервис успешно справляется со своей задачей.
 
 \begin{figure}[h!]
 	\center
@@ -1047,6 +1081,293 @@ Applied Computing and Informatics
 \end{thebibliography}
 
 \newpage
-\section-{ПРИЛОЖЕНИЕ А}
+\section-{ПРИЛОЖЕНИЕ А. Реализация FCNN модели}
+
+\begin{lstlisting}[language=Python, caption=Класс модели]
+import torch
+from torch import nn
+
+from pytorch_lightning.core.lightning import LightningModule
+from pytorch_lightning.metrics.classification import Precision, Recall
+
+
+class NiggerClassifier(LightningModule):
+    TRAIN = 'train'
+    VALID = 'valid'
+    metric_classes = {
+        'precision': Precision,
+        'recall': Recall,
+        # 'fpr': FPR
+    }
+
+    def __init__(
+            self,
+            layers_size,
+            dropout,mystyle
+            optimizer_lr,
+            scheduler_factor,
+            scheduler_patience,
+            clf_thr=0.75,
+    ):
+        super().__init__()
+
+        self.layers_size = layers_size
+        self.dropout = dropout
+        self.optimizer_lr = optimizer_lr
+        self.scheduler_factor = scheduler_factor
+        self.scheduler_patience = scheduler_patience
+        self.clf_thr = clf_thr
+
+        self.fcnn = nn.Sequential(
+            nn.Linear(self.layers_size[0], self.layers_size[1]),
+            nn.ReLU(),
+            nn.Dropout(self.dropout),
+            nn.Linear(self.layers_size[1], self.layers_size[2]),
+            nn.ReLU(),
+            nn.Dropout(self.dropout),
+            nn.Linear(self.layers_size[2], self.layers_size[3]),
+            nn.Sigmoid(),
+        )
+
+        self.loss = nn.BCELoss()  # MSELoss
+
+        metrics = {}
+        for prefix in (self.TRAIN, self.VALID):
+            for metric_name, metric_class in self.metric_classes.items():
+                metrics[f'{prefix}_{metric_name}'] = metric_class()
+        self.metrics = nn.ModuleDict(metrics)
+        self.epoch_metric_names = list(self.metrics.keys())
+
+        self.save_hyperparameters()
+
+    def forward(self, input_vector: torch.Tensor) -> torch.Tensor:
+        return self.fcnn(input_vector)
+
+    def configure_optimizers(self):
+        optimizer = torch.optim.Adam(self.parameters(), lr=self.optimizer_lr)
+        lr_scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(
+            optimizer, factor=self.scheduler_factor, patience=self.scheduler_patience)
+
+        return {
+            'optimizer': optimizer,
+            'lr_scheduler': lr_scheduler,
+            'monitor': f'{self.VALID}_loss',
+        }
+
+    def step(self, batch, batch_idx, prefix):
+        x, y = batch
+
+        y_raw_pred = self(x)
+        y_pred = (y_raw_pred >= self.clf_thr).long()  # [batch_size, 1]
+
+        for key in self.metric_classes.keys():
+            self.metrics[f'{prefix}_{key}'](y_pred, y)
+
+        return {'loss': self.loss(y_raw_pred, y.float())}
+
+    def epoch_end(self, outputs, prefix):
+        epoch_metrics = {}
+
+        epoch_metrics[f'{prefix}_loss'] = torch.stack(
+            [item['loss'] for item in outputs]).mean()
+        for key, value in self.metrics.items():
+            if key.startswith(prefix):
+                epoch_metrics[key] = value.compute()
+
+        self.log_dict(epoch_metrics, logger=True, prog_bar=True)
+
+    def training_step(self, batch, batch_idx):
+        return self.step(batch, batch_idx, self.TRAIN)
+
+    def training_epoch_end(self, outputs):
+        return self.epoch_end(outputs, self.TRAIN)
+
+    def validation_step(self, batch, batch_idx):
+        return self.step(batch, batch_idx, self.VALID)
+
+    def validation_epoch_end(self, outputs):
+        return self.epoch_end(outputs, self.VALID)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Класс для хранения выборки]
+import numpy as np
+import pandas as pd
+import json
+import torch
+from common import config
+from sklearn.model_selection import train_test_split
+
+OLD_DATASET = 0
+NEW_DATASET = 1
+
+
+def get_old_dataset(path_to_dataset, input_size):
+    data = pd.read_csv(path_to_dataset, sep=',')
+    x = np.zeros((0, input_size))
+    y = np.empty(0, dtype=bool)
+
+    for idx in range(data['index'].size):
+        elem = data['embed'][idx]
+        if type(elem) != str:
+            # print('invalid type')
+            continue
+
+        vec = json.loads(elem)
+        if not np.any(vec):
+            # print('zero vector')
+            continue
+
+        x = np.zeros((0, input_size))
+        y = np.append(y, data['email'][idx].endswith('_1.eml'))
+
+    return x, y
+
+
+def get_new_dataset(path_to_dataset, input_size):
+    data = pd.read_csv(path_to_dataset, sep=',')
+    x = np.zeros((0, input_size))
+    y = np.empty(0, dtype=bool)
+
+    num_ham, hum_spam = 0, 0
+    for idx in range(data['y'].size):
+        elem = data['x'][idx]
+        if type(elem) != str:
+            # print('invalid type')
+            continue
+
+        vec = json.loads(elem)
+        if not np.any(vec):
+            # print('zero vector')
+            continue
+
+        x = np.vstack((x, vec))
+
+        is_spam = data['y'][idx]
+        y = np.append(y, is_spam)
+        if is_spam:
+            hum_spam += 1
+        else:
+            num_ham += 1
+
+    config.LOG('ham: ' + str(num_ham) + ' spam: ' +
+               str(hum_spam) + ' sum: ' + str(num_ham + hum_spam))
+
+    return x, y
+
+
+def get_train_loaders(path_to_old_dataset, path_to_new_dataset,
+                      input_size, batch_size, device, num_workers, dataset_type):
+    x = np.zeros((0, input_size))
+    y = np.empty(0, dtype=bool)
+    if dataset_type == OLD_DATASET:
+        x, y = get_old_dataset(path_to_old_dataset, input_size)
+    if dataset_type == NEW_DATASET:
+        x, y = get_new_dataset(path_to_new_dataset, input_size)
+
+    x_train, x_val, y_train, y_val = train_test_split(
+        x, y, test_size=0.2, random_state=42, stratify=y)
+
+    x_train = torch.from_numpy(x_train).float().to(device)
+    y_train = torch.from_numpy(y_train).long().unsqueeze(1).to(device)
+    x_val = torch.from_numpy(x_val).float().to(device)
+    y_val = torch.from_numpy(y_val).long().unsqueeze(1).to(device)
+
+    train_dataset = torch.utils.data.TensorDataset(x_train, y_train)
+    train_dataloader = torch.utils.data.DataLoader(
+        train_dataset, batch_size=batch_size, num_workers=num_workers, shuffle=True)
+
+    val_dataset = torch.utils.data.TensorDataset(x_val, y_val)
+    val_dataloader = torch.utils.data.DataLoader(
+        val_dataset, batch_size=batch_size, num_workers=num_workers, shuffle=False)
+
+    return [train_dataloader, val_dataloader]
+
+
+def get_test_loaders(path_to_dataset, input_size, batch_size, device, num_workers):
+    data = pd.read_json(path_to_dataset, lines=True)
+    features = pd.json_normalize(data=data['Features'])
+    data = pd.concat([data, features], axis=1)
+
+    x = np.zeros((0, input_size))
+    y_pred_old = np.empty(0)
+
+    subject = []
+    body = []
+    msg_id = []
+
+    for idx in range(data['FTEmbeddings'].size):
+        elem = data['FTEmbeddings'][idx]
+        if type(elem) != str:
+            # print('error type data for idx: ', idx)
+            continue
+
+        vec = json.loads(elem)
+        if len(vec) != input_size or not np.any(vec):
+            # print('error size or data for idx: ', idx)
+            continue
+
+        nigger_score = float(data['NiggerMlScore'][idx])
+        if nigger_score < 0.0:
+            # print('error nigger score for idx: ', idx)
+            continue
+
+        x = np.vstack((x, vec))
+        y_pred_old = np.append(y_pred_old, nigger_score)
+
+        subject.append(data['Subject'][idx])
+        body.append(data['BodyText'][idx])
+        msg_id.append(data['MsgID'][idx])
+
+    x = torch.from_numpy(x).float().to(device)
+    y_pred_old = torch.from_numpy(y_pred_old).float().unsqueeze(1).to(device)
+    dataset = torch.utils.data.TensorDataset(x, y_pred_old)
+    dataloader = torch.utils.data.DataLoader(
+        dataset, batch_size=batch_size, num_workers=num_workers, shuffle=False)
+
+    return [dataloader, {'subject': subject, 'body': body, 'msg_id': msg_id}]
+
+
+def get_test2_loaders(path_to_dataset, input_size, batch_size, device, num_workers):
+    x, y = get_new_dataset(path_to_dataset, input_size)
+
+    x = torch.from_numpy(x).float().to(device)
+    y = torch.from_numpy(y).long().unsqueeze(1).to(device)
+
+    dataset = torch.utils.data.TensorDataset(x, y)
+
+    return torch.utils.data.DataLoader(
+        dataset, batch_size=batch_size, num_workers=num_workers, shuffle=True)
+\end{lstlisting}
+
+\begin{lstlisting}[language=Python, caption=Запуск обучающего скрипта]
+from pytorch_lightning import loggers, callbacks, Trainer
+from common import config, metric
+from models import dataset, model
+
+
+config.LOG('read dataset')
+train_dataloader, val_dataloader = dataset.get_train_loaders(
+    config.OLD_DATASET_FILE, config.NEW_DATASET_FILE, config.LAYERS_SIZE[0],
+    config.BATCH_SIZE, config.DEVICE, config.NUM_CPU, dataset.NEW_DATASET)
+
+config.LOG('create model')
+nigger_model = model.NiggerClassifier(
+    layers_size=config.LAYERS_SIZE, dropout=config.DROPOUT, optimizer_lr=config.OPTIMIZER_LEARN_RATE,
+    scheduler_factor=config.SCHEDULER_FACTOR, scheduler_patience=config.SCHEDULER_PATIENCE,
+    clf_thr=config.CLF_THR).to(config.DEVICE)
+
+config.LOG('fit model')
+tensor_logger = loggers.TensorBoardLogger(
+    save_dir=config.DATA_PATH, name=config.LOGGER_NAME, version=config.VERSION)
+checkpoint_callback = callbacks.ModelCheckpoint(
+    dirpath=config.CHECKPOINTS_PATH, verbose=True, filename='{epoch}')
+trainer = Trainer(max_epochs=config.MAX_EPOCHS, logger=tensor_logger, callbacks=[
+    checkpoint_callback], progress_bar_refresh_rate=1)
+trainer.fit(nigger_model, train_dataloader, val_dataloader)
+
+config.LOG('collect metrics')
+metric.save_metrics(nigger_model.epoch_metric_names,
+                    config.VERSION_PATH, config.CHECKPOINT_METRIC_FILE)
+\end{lstlisting}
 
 \end{document}
