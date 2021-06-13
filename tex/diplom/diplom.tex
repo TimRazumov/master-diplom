@@ -8,7 +8,6 @@
 \usepackage{caption}
 \usepackage{listings}
 
-
 \usepackage{hhline}
 \usepackage{multirow}
 \usepackage{anyfontsize}
@@ -41,10 +40,6 @@
 \definecolor{codepurple}{rgb}{0.58,0,0.82}
 \definecolor{backcolour}{rgb}{0.95,0.95,0.92}
 
-%\usepackage{calc}
-%\newlength\lstlen
-%\setlength{\lstlen}{\textwidth+\marginparsep+\marginparwidth}
-%
 \lstdefinestyle{codestyle}{
     backgroundcolor=\color{backcolour},   
     commentstyle=\color{codegreen},
@@ -67,13 +62,6 @@
 }
 
 \lstset{style=codestyle,xleftmargin=0em}
-
-
-%\usepackage{geometry}
-%\geometry{left=3cm, right=1cm, top=2cm, bottom=2cm}
-
-%\usepackage{lipsum}  
-
 
 \graphicspath{ {./images/} }
 
@@ -143,13 +131,12 @@
 \end{center}
 
 
-
 \newpage
 \section-{АННОТАЦИЯ}
 
 В настоящей работе решается задача построения модели для обнаружения и фильтрации нежелательных спам-сообщений. В качестве модели классификатора нежелательных писем в электронной почте выбрана полносвязная свёрточная нейронная сеть ($FCNN$). Она позволяет разделить письма на две категории: \emph{спам} и \emph{не спам}. 
 
-Основным результатом исследования является программное приложение на языке \textsf{C++}, имеющее микро-сервисную архитектуру, и решающее задачу классификации писем. Приложение способно выдерживать более $10^6$ запросов в минуту в режиме реального времени.
+Основным результатом исследования является программное приложение на языке $C$++, имеющее микро-сервисную архитектуру, и решающее задачу классификации писем. Приложение способно выдерживать более $10^6$ запросов в минуту в режиме реального времени.
 
 
 \tableofcontents
@@ -175,8 +162,8 @@
 Метод роя частиц относится к методам стохастической оптимизации и применяется для эвристической глобальной оптимизации параметров наивного Байесовского классификатора. Комплексный подход с использованием наивного алгоритма Байеса вместе с методом оптимизации роя частиц применялся в \cite{Parmar2020}. 
 Эволюционная модель классификации спама представлена в \cite{Mohammad2020}. 
 
-Дальнейшее развитие методы получили в \cite{Mikolov2013},\cite{Bojanowski2017},\cite{Bommannavar2014},
-\cite{Yang2014},\cite{Churikov2004},\cite{Kravchenko2005}.
+%Дальнейшее развитие методы получили в \cite{Bojanowski2017},%\cite{Bommannavar2014},
+%\cite{Yang2014},\cite{Churikov2004},\cite{Kravchenko2005}.
 
 %{
 %\bf\color{amaranth}
@@ -196,7 +183,7 @@
 
 Признак (feature) $f$ объекта $x$ --- это результат измерения некоторой характеристики объекта. Формально признаком называется отображение вида $f: X \rightarrow D_f$, где $D_f$ --- множество допустимых значений признака. В частности, любой алгоритм $a: X \rightarrow Y$ также можно рассматривать как признак.
 
-В зависимости от природы множества $D_f$ признаки делят на несколько типов.
+В зависимости от природы множества $D_f$ признаки делят на несколько типов \cite{Zagugoiko1985}.
 \begin{enumerate}
   \item  Если $D_f = \{0,1\}$, то $f$ --- бинарный признак.
   \item  Если $D_f$ --- конечное множество, то $f$ --- номинальный признак.
@@ -298,7 +285,7 @@ accuracy= \dfrac{TP+TN}{TP+TN+FP+FN}.
 $$
 Эта метрика бесполезна в задачах с неравными классами, что демонстируется в \cite{Makkar2021}.
 
-Для оценки качества работы алгоритма на каждом из классов по отдельности введем метрики точности (precision) и полноты (recall)
+Для оценки качества работы алгоритма на каждом из классов по отдельности введем метрики точности (precision) и полноты (recall) \cite{Bommannavar2014}
 $$
 precision = \dfrac{TP}{TP + FP}, \quad recall = \dfrac{TP}{TP + FN}.
 $$
@@ -456,7 +443,7 @@ CV\left(\mu, X^L\right) =  \dfrac{1}{N} \sum_{i=1}^{N} Q\left(\mu(X_n^l\right), 
 
 \subsubsection*{Извлечение графических данных}
 
-Поскольку изображения и PDF не являются текстовыми форматами, то для автоматического извлечения текста необходимо использовать алгоритмы машинного обучения. Так как извлечения текста из большинства изображений исходных писем имеет низкое качество, то было разработано две модели на языке Python с использованием фреймворка PyTorch. 
+Поскольку изображения и PDF не являются текстовыми форматами, то для автоматического извлечения текста необходимо использовать алгоритмы машинного обучения \cite{Churikov2004}. Так как извлечения текста из большинства изображений исходных писем имеет низкое качество, то было разработано две модели на языке Python с использованием фреймворка PyTorch. 
 
 Первая модель отвечает за разметку и сегментацию изображения. Благодяря ей улучшается качество распознавания и увеличивается производительность, за счет того, что мы не пытаемся извлечь текст из тех фрагментов изображения, где его нет (рис. \ref{fig:segment}).
 
@@ -467,7 +454,7 @@ CV\left(\mu, X^L\right) =  \dfrac{1}{N} \sum_{i=1}^{N} Q\left(\mu(X_n^l\right), 
 	\label{fig:segment}
 \end{figure}
 
-Вторая модель реализована на основе полносвязной нейронной сети, которая возвращает вектор вероятностей по заданному фрагменту изображения. С её помощью извлекается весь текст из изображения (рис. \ref{fig:fcnn_img}).
+Вторая модель реализована на основе полносвязной нейронной сети, которая возвращает вектор вероятностей по заданному фрагменту изображения \cite{Kravchenko2005}. С её помощью извлекается весь текст из изображения (рис. \ref{fig:fcnn_img}).
 
 \begin{figure}[h!]
 	\center
@@ -532,7 +519,7 @@ $
 
 Основной проблемой BOW является потеря контекста между словами. Поскольку в естественном языке перестановка даже двух слов предложения  может полностью изменить его смысл, то данный подход к классификации может иметь низкую точность.
 
-Алгоритм word2vec --- это инструмент векториции текста с учетом контекстной связи между словами. В основе алгоритма лежат такие методы как huffman binary tree, skip-gram. Основной проблемой word2vec является поиск контекста для редких слов.
+Алгоритм word2vec --- это инструмент векториции текста с учетом контекстной связи между словами. В основе алгоритма лежат такие методы как huffman binary tree, skip-gram \cite{Mikolov2013_Efficient}. Основной проблемой word2vec является поиск контекста для редких слов.
 
 \begin{figure}[h!]
 	\center
@@ -554,7 +541,7 @@ p(w_O|w_I) = \dfrac{\exp({\vec{u}_{w_O}\cdot\vec{v}_{w_I}})}{\sum_{i=1}^{N} \exp
 \end{equation}
 где $\vec{v}_{w_I}$ --- некий контекстный вектор для слова $w_I$, $\vec{u}_{w_O}$ --- word2vec представление слова $w_O$.
 
-Поскольку стоимость вычисления функции softmax пропорциональна $O(N)$, которое на практике является очень большим (порядка $10^6$--$10^9$), что вызывает очень много вычислительных затрат и времени, то обычно вместо применения (\ref{eq:softmax}), используют иерархический softmax (\ref{eq:hierarchical_softmax}). В контексте языковых моделей нейронных сетей он был впервые представлен Морином и Бенжио \cite{Taylor2020}. Основное преимущество заключается в том, что вместо оценки $N$ выходных узлов в нейронной сети для получения
+Поскольку стоимость вычисления функции softmax пропорциональна $O(N)$, которое на практике является очень большим (порядка $10^6$--$10^9$), что вызывает очень много вычислительных затрат и времени, то обычно вместо применения (\ref{eq:softmax}), используют иерархический softmax (\ref{eq:hierarchical_softmax}). В контексте языковых моделей нейронных сетей он был впервые представлен Морином и Бенжио \cite{Mikolov2013_Distributed}. Основное преимущество заключается в том, что вместо оценки $N$ выходных узлов в нейронной сети для получения
 распределения вероятностей, можно оценить только около $\log_2 N$ узлов.
 
 Идея оптимизации заключается в том, что на основе словаря текста строится двоичное дерево. В каждом листе дерева закодированно слово. Обозначим расстояние от вершины (root) до слова $w$ как $L(w)$. Узел дерева под номером $j$ на пути от вершины до слова $w$ обозначим $n(w, j)$, при этом $n(w, 1) = $ root и $n(w, L(w)) = w$. Пусть $n_l(w,j)$ --- левый потомок для узла $n(w,j)$. Тогда выражение для вычисления вероятности $p(w_O|w_I)$ нахождения слова $w_O$ в контексте с $w_I$ имеет вид
@@ -564,7 +551,7 @@ p(w_O|w_I) = \prod\limits_{j=1}^{L(w)-1} \sigma \Big(\delta_{n(w,j+1), n_l(w,j)}
 \end{equation}
 где $\sigma(x) = 1 / (1 + e^{-x})$, $\delta_{i,j}$ --- символ Кронекера.
 
-Структура дерева, используемая иерархическим softmax, оказывает значительное влияние на производительность. Мних и Хинтон исследовали ряд методов построения древовидной структуры и влияние как на время обучения, так и на точность получаемой модели \cite{Kravchenko2005}. В этой работе используется двоичное
+Структура дерева, используемая иерархическим softmax, оказывает значительное влияние на производительность. Мних и Хинтон исследовали ряд методов построения древовидной структуры и влияние как на время обучения, так и на точность получаемой модели \cite{Bojanowski2017}. В этой работе используется двоичное
 дерево Хаффмана (рис. \ref{fig:huffman}), так как оно присваивает короткие коды частым словам, что приводит к более быстрому обучению.
 
 \begin{figure}[h!]
@@ -720,7 +707,7 @@ $$
 Таким образом, логистическая функция потерь $Z(M)= \ln{\left(1 + e^{-M}\right)}$ является следствием экспонентности классов и принципа максимума правдоподобия.
 
 Запишем градиент функционала $\tilde{Q}(w)$, воспользовавшись выражением для производной сигмоидной функции $\sigma'(z) = \sigma(z)(1 - \sigma(z)) = \sigma(z)\sigma(-z)$,
-и получим логистическое правило обновления весов для градиентного шага в методе стохастического градиента
+и получим логистическое правило обновления весов для градиентного шага в методе стохастического градиента \cite{Galanin2010}
 $$
 \vec{w} := \vec{w} + \eta y_i \vec{x_i} \sigma(-(\vec{w} \cdot \vec{x_i})y_i),
 $$
@@ -733,12 +720,12 @@ $$
 
 Итак, отдельно взятый нейрон вида (\ref{eq:lin_clf}) позволяет реализовать линейный классификатор или линейную регрессию. При решении практических задач линейность
 оказывается чрезмерно сильным ограничением. На ограниченность персептрона указывали Минский и Пайперт в своей знаменитой книге 
-``Персептроны'' \cite{Garg2021}.
+``Персептроны'' \cite{Gahov1968}.
 
 Следующие утверждения показывают, что любую функцию можно аппроксимировать с помощью нейронной сети.\\
 %\begin{enumerate}
 1.~Любая булева функция представима в виде двухслойной сети. Это тривиальное следствие нейронной представимости логических функций И, ИЛИ, НЕ и представимости
-произвольной булевой функции в виде дизъюнктивной нормальной формы \cite{Parmar2020}.\\
+произвольной булевой функции в виде дизъюнктивной нормальной формы \cite{Hastie2001}.\\
 2.~Из простых геометрических соображений вытекает, что двухслойная сеть
 с пороговыми функциями активации позволяет выделить произвольный выпуклый
 многогранник в $n$-мерном пространстве признаков. Трёхслойная сеть позволяет вычислить любую конечную линейную комбинацию характеристических функций выпуклых многогранников, следовательно, аппроксимировать любые области с непрерывной границей, включая невыпуклые и даже неодносвязные, а также аппроксимировать любые непрерывные функции.\\
@@ -756,7 +743,7 @@ $$
 4.~Известна классическая теорема Вейерштрасса о том, что любую непрерывную функцию $n$ переменных можно равномерно приблизить полиномом с любой степенью точности. Более общая теорема Стоуна утверждает, что любую непрерывную
 функцию на произвольном компакте $X$ можно приблизить не только многочленом
 от исходных переменных, но и многочленом от любого конечного набора функций $F$,
-разделяющих точки \cite{Mikolov2013}.
+разделяющих точки \cite{Kolmogorov1958}.
 %\end{enumerate}
 
 Таким образом, нейронные сети являются универсальными аппроксиматорами
@@ -848,7 +835,7 @@ $$
 
 \subsection{Результаты расчетов и сравнение моделей}
 
-Согласно статье [....] была произведена разметка уникальных точек на отрезке $[0, 1]$ с шагом $0.1$ и вычеслена оптимальная пороговая точность $\alpha = 0.75$, которая обеспечивает оптимальный pressision и recall для нашей модели и минимизует дисперсию ошибки.
+Согласно статье \cite{Yang2014} была произведена разметка уникальных точек на отрезке $[0, 1]$ с шагом $0.1$ и вычеслена оптимальная пороговая точность $\alpha = 0.75$, которая обеспечивает оптимальный precision и recall для нашей модели и минимизует дисперсию ошибки.
 
 \subsubsection*{Результаты расчетов для логистической регрессии}
 
@@ -1080,69 +1067,65 @@ x, & x > 0, \\
 \newpage
 \begin{thebibliography}{17}
 \bibitem{Makkar2021} 
-Aaisha Makkar, Uttam Ghosh, Pradip Kumar Sharma.
-2021. \emph{Artificial Intelligence and Edge Computing-enabled
-	Web Spam Detection for Next Generation IoT
-	Applications} // IEEE Sensors Journal
+\textbf{Makkar A., UGhosh U., Sharma P.K.} Artificial Intelligence and Edge Computing-enabled Web Spam Detection for Next Generation IoT Applications. IEEE Sensors Journal. 2021. 
 
 \bibitem{Taylor2020}
-Taylor O.E., Ezekiel P.S.
-2020. \emph{A Model to Detect Spam Email Using Support Vector Classifier and Random Forest Classifier} //
-International Journal of Computer Science and Mathematical Theory
+\textbf{Taylor O.E., Ezekiel P.S.} A Model to Detect Spam Email Using Support Vector Classifier and Random Forest Classifier.
+International Journal of Computer Science and Mathematical Theory. 2020.
+
 
 \bibitem{Garg2021}
-Pranjul Garg, Nancy Girdhar.
-2021. \emph{A systematic review on spam filtering techniques based on
-natural language processing framework} // 2021 11th International Conference on Cloud Computing, Data Science \& Engineering (Confluence 2021)
+\textbf{Garg P., Girdhar N.} A systematic review on spam filtering techniques based on natural language processing framework. 11th International Conference on Cloud Computing, Data Science Engineering. 2021.
 
 \bibitem{Parmar2020}
-Nandan Parmar, Ankita Sharma, Harshita Jain, Amol K. Kadam.
-2020. \emph{Email Spam Detection using Nave Bayes and Particle Swarm Optimization} // IJIRT
+\textbf{Parmar N., Sharma A., Jain H., Kadam K.A.} Email Spam Detection using Nave Bayes and Particle Swarm Optimization. IJIRT. 2020.
 
 \bibitem{Mohammad2020}
-Rami Mustafa A. Mohammad.
-2020. \emph{A lifelong spam emails 	classification model} //
-Applied Computing and Informatics
+\textbf{Mohammad R.M.} A lifelong spam emails 	classification model. Applied Computing and Informatics. 2020.
 
-\bibitem{Mikolov2013} 
-Mikolov T, Chen K, Corrado G, and Dean J
-2013 {Efficient estimation of word representations in vector space} 
-arXiv:1301.3781v3
+\bibitem{Mikolov2013_Efficient}
+\textbf{Mikolov T., Chen K., Corrado G., Dean J.} Efficient estimation of word representations in vector space. arXiv:1301.3781v3. 2013.
 
-\bibitem{Bojanowski2017} 
-Bojanowski P, Grave E, Joulin A, and Mikolov T
-2017 {Enriching word vectors with subword information} 
-arXiv:1607.04606v2
+\bibitem{Mikolov2013_Distributed}
+\textbf{Mikolov T., Chen K., Corrado G., Dean J.} Distributed representations of words and phrases and their compositionality. 27th Annual Conference on Neural Information Processing System. 2013.
+
+\bibitem{Bojanowski2017}
+\textbf{Bojanowski P., Grave E., Joulin A., Mikolov T.} Enriching word vectors with subword information. arXiv:1607.04606v2. 2017.
 
 \bibitem{Bommannavar2014}
-Bommannavar P, Kolcz A, Rajaraman A
-2014 {Recall estimation for rare topic retrieval from large corpuses}
-\emph{2014 IEEE International Conference on Big Data}
+\textbf{Bommannavar P., Kolcz A., Rajaraman A.} Recall estimation for rare topic retrieval from large corpuses.  IEEE International Conference on Big Data. 2014.
 
 \bibitem{Yang2014}
-Yang S, Kolcz A, Schlaikjer A, and Gupta P
-2014 {Large--scale high-precision topic modeling on twitter} 
-\emph{Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining} pp 1907--1916
+\textbf{Yang S., Kolcz A., Schlaikjer A., Gupta P.} Large-scale high-precision topic modeling on twitter. Proceedings of the 20th ACM SIGKDD international conference on Knowledge discovery and data mining. 2014.
 
-\bibitem{Churikov2004} Churikov D V 2004
-{Atomic functions and combined algorithm of image filtration in conditions of high intensity noise}
-\emph{Radiotekhnika} \textbf{9} pp 69--71. In Russian.
+\bibitem{Churikov2004} \textbf{Churikov D.V.} Atomic functions and combined algorithm of image filtration in conditions of high intensity noise. Radiotekhnika 9. Russian. 2004.
 
 \bibitem{Kravchenko2005}
-Kravchenko V F, Fedorov I V, Churikov D V and Rvachev V L 2005 
-{R--functions and the atomic functions in problems of complex--shaped contour objects description and digital image processing}
-\emph{EW \& ES} \textbf{10} (7) pp 70--80. In Russian.
+\textbf{Kravchenko V.F., Fedorov I.V., Churikov D.V. and Rvachev V.L.} R-functions and the atomic functions in problems of complex-shaped contour objects description and digital image processing. EW \& ES. Russian. 2005.
+
+\bibitem{Gahov2014}
+\textbf{Гахов A.K.} Интеллектуальный анализ данных. Харьковский национальный университет имени В.Н. Карамзина, 2014.
+
+\bibitem{Gahov1968}
+\textbf{Minsky M., Papert S.} Perceptrons an Introduction to Computational Geometry. MIT Press. 1968.
+
+\bibitem{Zagugoiko1985}
+\textbf{Загоруйко Н.Г., Ёлкина В.Н., Лбов Г.С.} Алгоритмы обнаружения эмпирических закономерностей. Наука. Новосибирск. 1985.
+
+\bibitem{Kolmogorov1958}
+\textbf{Колмогоров А.Н.} О представлении непрерывных функций нескольких переменных в виде суперпозиции непрерывных функций одного переменного. Докл. АН СССР. Т. 114. С. 953-956. 1958.
+
+\bibitem{Galanin2010}
+\textbf{Галанин М.П., Савенков Е.Б.} Методы численного анализа математических моделей. Москва: Изд-во МГТУ им. Н.Э. Баумана, 591~с. 2010.
+
+\bibitem{Hastie2001}
+\textbf{Hastie T., Tibshirani R., Friedman J.} The Elements of Statistical Learning. Springer. 533 pp. 2001.
 
 \end{thebibliography}
 
 \newpage
 \section-{ПРИЛОЖЕНИЕ А}
 
-%Что--нибудь $\ldots$
-
-%\lipsum[1-20]
-
-%\begin{verbatim}
 \begin{lstlisting}[language=Python, caption=Класс модели]
 import torch
 from torch import nn
@@ -1248,7 +1231,6 @@ class NiggerClassifier(LightningModule):
     def validation_epoch_end(self, outputs):
         return self.epoch_end(outputs, self.VALID)
 \end{lstlisting}
-%\end{verbatim}
 
 \begin{lstlisting}[language=Python, caption=Класс для хранения выборки]
 import numpy as np
