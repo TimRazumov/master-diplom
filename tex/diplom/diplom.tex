@@ -843,7 +843,7 @@ $$
 
 \subsection{Результаты расчетов и сравнение моделей}
 
-Согласно статье \cite{Yang2014} была произведена разметка уникальных точек на отрезке $[0, 1]$ с шагом $0.1$ и вычислена оптимальная пороговая точность $\alpha = 0.75$, которая обеспечивает оптимальный precision и recall для нашей модели и минимизует дисперсию ошибки.
+Согласно статье \cite{Yang2014} была произведена разметка уникальных точек на отрезке $[0, 1]$ с шагом $0.1$ и вычислена оптимальная пороговая точность, которая составляет $\alpha = 0.75$, и обеспечивает оптимальный precision и recall для нашей модели и минимизует дисперсию ошибки.
 
 \subsubsection*{Результаты расчетов для логистической регрессии}
 
@@ -1429,10 +1429,6 @@ checkpoint_callback = callbacks.ModelCheckpoint(
 trainer = Trainer(max_epochs=config.MAX_EPOCHS, logger=tensor_logger, callbacks=[
     checkpoint_callback], progress_bar_refresh_rate=1)
 trainer.fit(nigger_model, train_dataloader, val_dataloader)
-
-config.LOG('collect metrics')
-metric.save_metrics(nigger_model.epoch_metric_names,
-                    config.VERSION_PATH, config.CHECKPOINT_METRIC_FILE)
 \end{lstlisting}
 
 \end{document}
