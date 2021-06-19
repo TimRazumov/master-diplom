@@ -32,31 +32,202 @@ Electronics of RAS\inst{2}\\ Bauman Moscow State Technical University\inst{3}}
 
 \graphicspath{{images/}}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{document}
 \begin{frame}[plain]
 \titlepage
 \end{frame}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{привет}
-It was notices by \myStandartColoredItem{V.A. Rvachev,
-\emph{''Finite solutions of functional--differential equations and their applications''}, UMN, 45, 1990, pp.\,77--103 (in russian)},
-that FDEs with linear transformed argument are appears in\\
-{\color{blue}in physics}
-\begin{quote}\scriptsize
-L. Fox, DR Mayers, JR Ockendon and AB Tayler, On a functional-differential equation,
-J. Inst. Math. Appl. 8 (1971) 271-307,
-\end{quote}
-{\color{blue}in neutrons transport theory}
-\begin{quote}\scriptsize
-G.I. Marchuk, V.I. Lebedev, Numerical methods in neutrons transport theory - 1971 (in russian),
-\end{quote}
-{\color{blue}in biology}
-\begin{quote}\scriptsize
-P.N. Singh, D. Ramkrishna, Solution of population balance equations by MWR,
-Volume 1, Issue 1, 1977
-\end{quote}
-e.t.c.
+\frametitle{Актуальность проблемы}
+
+\begin{center}
+\includegraphics[width=0.45\textwidth]{actual1.jpg}
+\includegraphics[width=0.45\textwidth]{actual2.jpg}
+\includegraphics[width=0.45\textwidth]{actual3.jpg}
+\includegraphics[width=0.45\textwidth]{actual4.jpg}
+\end{center}
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Постановка задачи}
+
+В рамках работы требуется реализовать спам--фильтр для следующих продуктов Mail.Ru Group: почта, юла, мой мир, ответы, icq, пульс, агент. Ключевыми требованиями на фильтр являются:
+\begin{itemize}
+\item Высокая точность --- должно верно классифицироваться не менее 99\% писем.
+\item Высокая отказоустойчивость --- сервис, осуществляющий запуск спам--фильтра, должен отвечать не менее чем на 99.99\% запросов.
+\item Высокая производительность --- полный цикл проверки письма не должен быть дольше 3--х секунд.
+\end{itemize}
+
+Формально постановку задачи можно разбить на 4 этапа:
+\begin{enumerate}
+\item Предобработка письма.
+\item Построение отображения текстовой информации в векторное пространство (векторизация).
+\item Классификация объектов.
+\item Постоение микросервисной архитектуры для запуска спам--фильтра на реальных пользователях.
+\end{enumerate}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Предобработка}
+
+\begin{center}
+Предобработка
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Предобработка}
+
+Письмо в веб--интерфейсе
+\begin{center}
+\includegraphics[width=.9\textwidth]{eml.jpg}
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Предобработка}
+
+Сырое письмо
+\begin{center}
+\includegraphics[width=.9\textwidth]{eml_raw.jpg}
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Предобработка}
+
+\textbf{Текстовая информация}
+
+Для извлечения информации из документов, имеющих текстовый формат, таких как docx, html, calendar и.т.д. реализованы собственные специализированные парсеры написанные на $C$++
+
+\textbf{Графическая информация}
+
+Поскольку изображения и pdf не являются текстовыми форматами, то
+для автоматического извлечения текста разработано два алгоритма машинного обучения на языке Python
+\begin{itemize}
+\item Модель сегментации и зондирования
+\item Модель извлечения текста
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Предобработка}
+
+После извлечения информации из всех вложений письма текст проходит через следующие этапы:
+\begin{itemize}
+\item Конкатенация всех частей с заданными разделителями.
+\item Декодирование в заданную кодировку (UTF8, CP1251) и приведение к одному регистру.
+\item Удаление лишних пробелов, отступов и стоп--слов.
+\item Нормализация
+\begin{enumerate}
+\item Стемминг
+\item Лемматизация
+\end{enumerate}
+\end{itemize}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Векторизация}
+
+\begin{center}
+Векторизация
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Мешок слов (bow)}
+
+Каждому слову или словосочетанию (терму) ставится в соответствие некоторое число. В этом случае текст определяется вектором $\vec{w} = (w_1, ..., w_N)^T$,
+где $N$ --- размерность из конечного словаря $X^l$ состоящего из уникальных термов обучающей выборки. \\
+$w_i$ определяется как Булевский вес:
+$$
+w_i = \begin{cases}
+1, & \mbox{если элемент присутствует в письме}, \\
+0, & \mbox{если элемент не присутствует в письме}.
+\end{cases}
+$$
+
+\begin{center}
+\includegraphics[width=0.6\textwidth]{bow.png}
+\end{center}
+
+Основной проблемой bow--векторизации является потеря контекстной связи между словами.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{word2vec}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Классификация}
+
+\begin{center}
+Классификация
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Запуск на пользователях}
+
+\begin{center}
+Запуск на пользователях
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Заключение}
+
+\begin{center}
+Выводы
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Заключение}
+
+Публикации
+\begin{center}
+
+\end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+
+\frametitle{Заключение}
+
+\begin{center}
+СПАСИБО ЗА ВНИМАНИЕ!
+\end{center}
+
 \end{frame}
 
 \end{document}
