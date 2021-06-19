@@ -289,7 +289,7 @@ $$
 
 Градиентный шаг при настройке параметров $\vec{w}$ с темпом обучения $\eta$
 $$
-\vec{w} := \vec{w} + \eta y_i \vec{x_i} \sigma(-(\vec{w} \cdot \vec{x_i})y_i).
+\vec{w} := \vec{w} + \eta\,y_i \vec{x_i} \sigma(-(\vec{w} \cdot \vec{x_i})y_i).
 $$
 
 \end{frame}
@@ -300,21 +300,20 @@ $$
 \small
 
 Полносвязная нейронная сеть для нашей задачи имеет 3 слоя. На каждом слое производится регуляризация данных.
-
-\begin{center}
-\includegraphics[width=0.55\textwidth]{fcnn.png}
-\end{center}
-
-В нашем случае нейронную сеть можно определить формулой
+%\begin{center}
+%\includegraphics[width=0.55\textwidth]{fcnn.png}
+%\end{center}
+%
+Для решаемой задачи нейронная сеть представляет собой аппроксимационную функцию вида
 \begin{align*}
-& a(x) = h_2 \left(\sum_{k=0}^{n_2} w''_k h_1\left(\sum_{j=0}^{n_1} w'_j h_0\left( \sum_{i=0}^{n_0} w_i x_i \right)\right)\right), \\
+& \mu(x) = h_2 \left(\sum_{k=0}^{n_2} w''_k h_1\left(\sum_{j=0}^{n_1} w'_j h_0\left( \sum_{i=0}^{n_0} w_i x_i \right)\right)\right), \\
 & h_2(x) = \dfrac{1}{1+e^{-x}}, \quad h_0(x) = h_1(x) = 
 \begin{cases} 
 x, & x > 0, \\
 0, & x \leqslant 0.
 \end{cases}
 \end{align*}
-где $h_i$ --- функция активации для соответствующего слоя. Для нахождения весов $\{w_i\}_{i=0}^{n_0}$, $\{w'_j\}_{j=0}^{n_1}$, $\{w''_k\}_{k=0}^{n_2}$ используется градиентный метод Адама.
+где $h_i$ --- функция активации для соответствующего слоя. Для нахождения весовых коэффициентов $\{w_i\}_{i=0}^{n_0}$, $\{w'_j\}_{j=0}^{n_1}$, $\{w''_k\}_{k=0}^{n_2}$ используется метод адаптивной оценки моментов (Adaptive Moment Estimation, Adam).
 
 \end{frame}
 
