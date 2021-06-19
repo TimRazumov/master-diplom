@@ -19,23 +19,29 @@
 \usepackage{subfigure}
 \usepackage{cmap}
 
+\usepackage{ragged2e}
+
 \definecolor{darkred}{RGB}{16,78,139}
 \newcommand{\myStandartColoredItem}[1]{{\color{darkred}\bf{{#1}}}}
 
+\titlegraphic{\includegraphics[width=2.5cm]{emblema.eps}}
 \title[]{ПРИМЕНЕНИЕ МЕТОДОВ МАШИННОГО ОБУЧЕНИЯ ДЛЯ РЕШЕНИЯ ЗАДАЧИ ФИЛЬТРАЦИИ НЕЖЕЛАТЕЛЬНЫХ ДАННЫХ}
-%\author[]{W. Hilberg\inst{1}, V.F. Kravchenko\inst{2,3}, Ya.Yu. Konovalov\inst{3}, O.V. Kravchenko\inst{2,3}}
-%\institute[IRE]{TU Darmshtadt\inst{1}, IRE RAS named after V.A.~Kotelnikov\inst{2},\\ BMSTU named after N.E.~Bauman\inst{3}}
-%\date{\today}
-\author[Hilberg, Kravchenko, Konovalov]{Wolfgang~Hilberg\inst{1}, V.F.~Kravchenko\inst{2,3}, O.V.~Kravchenko\inst{2,3} \& Y.Y.~Konovalov\inst{3}}
-\institute[]{Technische Universitat Darmstadt\inst{1}\\Kotel'nikov Institute of Radio Engineering and
-Electronics of RAS\inst{2}\\ Bauman Moscow State Technical University\inst{3}}
+\author{
+Выполнил студент группы ФН1-41М Разумов~Т.Е. \\
+Научный руководитель профессор кафедры ФН1 Кувыркин~Г.Н.}
+\institute[]{МГТУ им. Н.Э.~Баумана}
+\date{21 июня 2021 г.}
 
 \graphicspath{{images/}}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
 \begin{document}
+
+%\justify
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[plain]
-\titlepage
+	\maketitle
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -66,14 +72,13 @@ Electronics of RAS\inst{2}\\ Bauman Moscow State Technical University\inst{3}}
 \item Предобработка письма.
 \item Построение отображения текстовой информации в векторное пространство (векторизация).
 \item Классификация объектов.
-\item Постоение микросервисной архитектуры для запуска спам--фильтра на реальных пользователях.
+\item Разработка приложения, имеющего микросервисную архитектуру, для запуска системы на реальных пользователях.
 \end{enumerate}
 
 \end{frame}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Предобработка}
 
 \begin{center}
 Предобработка
@@ -109,7 +114,7 @@ Electronics of RAS\inst{2}\\ Bauman Moscow State Technical University\inst{3}}
 
 \textbf{Текстовая информация}
 
-Для извлечения информации из документов, имеющих текстовый формат, таких как docx, html, calendar и.т.д. реализованы собственные специализированные парсеры написанные на $C$++
+Для извлечения информации из документов, имеющих текстовый формат, таких как docx, html, calendar и.т.д. реализованы собственные специализированные парсеры написанные на $C$++ и Golang
 
 \textbf{Графическая информация}
 
@@ -131,10 +136,10 @@ Electronics of RAS\inst{2}\\ Bauman Moscow State Technical University\inst{3}}
 \item Конкатенация всех частей с заданными разделителями.
 \item Декодирование в заданную кодировку (utf8, cp1251) и приведение к одному регистру.
 \item Удаление лишних пробелов, отступов и стоп--слов.
-\item Нормализация
+\item Нормализация:
 \begin{enumerate}
-\item Стемминг
-\item Лемматизация
+\item Стемминг (``кошек'' $\rightarrow$ ``кош'').
+\item Лемматизация (``кошек'' $\rightarrow$ ``кошка'').
 \end{enumerate}
 \end{itemize}
 
@@ -142,11 +147,16 @@ Electronics of RAS\inst{2}\\ Bauman Moscow State Technical University\inst{3}}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Векторизация}
 
 \begin{center}
 Векторизация
 \end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Постановка задачи}
 
 \end{frame}
 
@@ -168,7 +178,7 @@ $$
 \includegraphics[width=0.6\textwidth]{bow.png}
 \end{center}
 
-Основной проблемой bow--векторизации является потеря контекстной связи между словами.
+Основной проблемой bow--векторизации является потеря контекстной связи между словами и чрезмерно большое потребление памяти.
 
 \end{frame}
 
@@ -215,7 +225,6 @@ $$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Классификация}
 
 \begin{center}
 Классификация
@@ -225,11 +234,89 @@ $$
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}
-\frametitle{Запуск на пользователях}
+\frametitle{Постановка задачи}
+
+Требуется построить отображение из $\mu^{*} : X =  \mathbb{R}^n \rightarrow Y = \{-1,+1\}$ по обучающей выборке $X^l = (\vec{x}_i, y_i)_{i=1}^l$, таким образом, что
+
+$$
+\mu^{*}\left(X^l\right) = \operatorname*{argmin}_{\mu \in A}  Q\left(\mu, X^l\right), \quad Q\left(\mu, X^l\right) = \dfrac{1}{l} \sum_{i=1}^{l} Z(a, x_i).
+$$
+где $X$ --- признаковое пространство векторизованных текстов, \\
+$\mu$ --- решающая функция, $A$ --- множество решающих функций, \\
+$Z$ --- функция потерь, характеризующая величину ошибки функции $\mu$ на объекте $\vec{x}$, $Q$ --- функция эмперического риска, \\
+$Y$ --- множество допустимых ответов, \\
+Для нашего случая $-1$ --- спам, $+1$ --- не спам. \\
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Вероятностная постановка задачи}
+
+Минимизация функционала эмпирического риска эквивалетна задаче максимизации функции правдоподобия
+$$
+L(\vec{\theta}, X^l) = \prod\limits_{i=1}^l f(\vec{x}_i, y_i, \vec{\theta}) \rightarrow \max_{\vec{\theta}},
+$$
+$$
+\ln L(\vec{\theta}, X^l) = \sum_{i=1}^{l} \ln f(\vec{x}_i, y_i, \vec{\theta}) \rightarrow \max_{\vec{\theta}},
+$$
+где $L$ --- функция правдоподобия, $X^l$ --- обучающая выборка, \\
+$f(\vec{x}, y)$ --- совместная плотность распределения случайных величин $\vec{x}$~и~$y$,
+$\vec{\theta}$ --- параметры решающей функции.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Логистическая регрессия}
+
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Полносвязная нейронная сеть}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Сравнение моделей}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
 
 \begin{center}
-Запуск на пользователях
+Построение приложения и верификация модели
 \end{center}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Архитектура приложения}
+
+\begin{center}
+\includegraphics[width=.8\textwidth]{architecture.jpg}
+\end{center}
+
+k8s (kubernetes) --- открытое программное обеспечение для оркестровки контейнеризированных приложений и автоматизации их развертывания, масштабирования и координации в условиях кластера.
+
+Redis --- резидентная система управления базами данных класса NoSQL с открытым исходным кодом, работающая со структурами данных типа ``ключ--значение''. Используется как для баз данных, так и для реализации кэшей, брокеров сообщений. Ориентирована на достижение максимальной производительности на атомарных операциях.
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Графики}
+
+\end{frame}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{frame}
+\frametitle{Графики}
 
 \end{frame}
 
