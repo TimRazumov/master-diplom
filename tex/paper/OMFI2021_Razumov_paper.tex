@@ -196,22 +196,9 @@ The proposed architecture is fairly robust because when the OCR of one (or sever
 
 \begin{figure}[h!]
 	\center
-	\includegraphics[width=0.8\textwidth]{images/deploy.jpg}
+	\includegraphics[width=0.8\textwidth]{images/architecture.jpg}
 	\caption{\label{fig:01} Application architecture.}
 \end{figure}
-
-%%<<<<<<< HEAD
-%\begin{figure}[h!]
-%	\center
-%	\includegraphics[width=0.8\textwidth]{images/timings_upd.png}
-%	\caption{\label{fig:02} Average email processing time}	
-%\end{figure}
-% 
-%\begin{figure}[h!]
-%	\center
-%	\includegraphics[width=0.95\textwidth]{images/processed_messages.png}
-%	\caption{\label{fig:03} Average number of requests per minute from one of the farms}
-%%=======
 
 \begin{figure}[b]
 \centering
@@ -236,6 +223,8 @@ Since the service must operate under high loads, it is important to provide a ro
 Since, highly likely the letter can be duplicated (for example, in the case of a ddos attack or offline rechecking), in order not to load the OCR service once again, the primary check of the redis cache (arrow 1,4) is performed for the presence of already processed data for the specified document hash.
 After full text extraction, the mrasd service performs all the steps of text preprocessing (reduction to a single register, removal of stop words, normalization), and then sends the text to the mlapi service (arrow 5) via the grpc protocol to vectorize the text using fast text and further obtain the FCNN prediction of the model by which a decision is made about the ``undesirability'' of the incoming message.
 The proposed architecture is fairly robust because when the OCR of one (or several) instances of redis cluster fails, the entire system as a whole does not degrade.
+
+%Ранее сервис OCR был написан на языке C++, позже он был %переписан на Golang с полным сохранением функционала. %Переписывание сервиса позволило в 5 раз сэкономить количество  %памяти и cpu.
  
 \begin{figure}
 \centering
@@ -253,13 +242,50 @@ The proposed architecture is fairly robust because when the OCR of one (or sever
 \end{tikzpicture}
 
 \caption{\label{fig:03} Average number of requests per minute from one of the farms.}
+\end{figure}
 
-%>>>>>>> b4a7605f38c293c05327fdf168e9f6fdc80b94a3
+%Сперва в предложенной архитектуре был запущен классификатор %логистической регрессии на мешке слов (bow). На графиках он %обозначен как old clf. Затем был осуществлен запуск нового %классификатора --- полносвязная нейронная сеть на основе fast %text. На рис. \ref{fig:05} и \ref{fig:06} отображены %количество блокировок и количество жалоб на старый и новый %классификатор соответственно. Анализируя эти графики можно %увидеть, что новый классификатор блокирует в 1.5 раза больше, %но при этом на его решения жалуются в 2.5 раза меньше.
+
+\begin{figure}
+\centering
+
+\begin{tikzpicture}
+
+    \node (image) at (0,0) {
+        \includegraphics[width=0.99\textwidth]{images/old_vs_new_ps.jpg}
+    };
+
+    \draw [opacity=0.5] (0, -3.0) node {time in hours};
+
+    \draw [opacity=0.5] (-8.15, 0) node {\rotatebox{90}{blockings}};
+
+\end{tikzpicture}
+
+\caption{\label{fig:05} Blocking old and new classifier.}
+\end{figure}
+
+
+\begin{figure}
+\centering
+
+\begin{tikzpicture}
+
+    \node (image) at (0,0) {
+        \includegraphics[width=0.99\textwidth]{images/old_vs_new_fp.jpg}
+    };
+
+    \draw [opacity=0.5] (0, -3.0) node {time in hours};
+
+    \draw [opacity=0.5] (-8.15, 0) node {\rotatebox{90}{complaints}};
+
+\end{tikzpicture}
+
+\caption{\label{fig:06} Complaints about old and new classifier.Blocking old and new classifier.}
 \end{figure}
 
 \subsubsection*{Brief review of the libraries.}
 Since services require high performance, the C++ language (stl 17, grpc, boost) is chosen as one of the most productive modern languages. Python 3 language and pyTorch framework were utilized for data analysis and training due to the high efficiency and the possibility of conducting parallel calculations, both on the CPU and on the GPU cores of the machine.
-The fault tolerance of microservices is ensured by their deployment in the kubernetes (k8s) cluster, since if any pod falls for any reason. The requests are evenly balanced across the remaining live feeds, until the cluster independently returns to its previous state. 
+The fault tolerance of microservices is ensured by their deployment in the kubernetes (k8s) cluster, since if any pod falls for any reason. The requests are evenly balanced across the remaining live feeds, until the cluster independently returns to its previous state.
 
 \section{Conclusions}
 
