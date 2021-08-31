@@ -1,0 +1,238 @@
+% This is a LaTeX template for ICPEAC 2021 abstract
+% Acknowledgements: thanks to Dragan Nicolic
+% Modifications by H Bachau, F Penent and R Brédy for ICPEAC 2019
+% (Tiny) modifications by T Jahnke for ViCPEAC 2021
+% Last update: 17/02/2021
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%					USER'S INPUT IS EXPECTED below line 135
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[a4paper,11pt,draft]{article}
+
+%%%%%%% PACKAGES %%%%%%%
+\usepackage[a4paper,bindingoffset=0truemm,%
+            left=20truemm,right=20truemm,top=30truemm,bottom=29truemm,
+            footskip=0truemm]{geometry} % (do not change dimensions)
+\usepackage{multicol}
+\usepackage{graphicx}
+\usepackage{setspace}
+\usepackage[hang,flushmargin]{footmisc} %left align the footnote - no indent
+\usepackage[
+   colorlinks,
+   linkcolor=blue,
+   urlcolor=blue,
+   citecolor=blue,
+%   dvipdfm           % Uncomment if using dvipdfm to convert dvi into pdf
+   ]{hyperref}
+%\usepackage{layout}
+
+%%%%%%%%%%%%%%%%%%%% MACROS (do not change) %%%%%%%%%%%%%%%%%%%%
+
+\renewcommand\refname{\normalsize References }
+
+\renewcommand\baselinestretch{1}
+\pagestyle{empty}
+
+\newcommand{\abstracttitle}[1]{
+\setstretch{1.15}	%increase the space between the two lines of the title
+ \begin{center}{\Large {\bf #1}}\end{center}
+\setstretch{1.0}
+}
+
+\newcommand{\authors}[1]{
+%\vspace*{-10pt}
+ \begin{center}{\bf #1} \end{center}
+ \setstretch{1.0}
+%\vspace*{-10pt}
+}
+
+\newcommand{\addresses}[1]{
+\setstretch{0.95} %decrease the space between the affiliation
+ \begin{center}{\small #1} \end{center}
+\setstretch{1.0}
+}
+
+\newcommand{\synopsis}[1]{
+ \begin{center}
+%  \setstretch{0.85}
+ \begin{minipage}[t]{16cm}
+   \setstretch{0.85}
+   {\footnotesize {\bf Synopsis} #1 }	
+ \end{minipage}
+ \end{center}
+ \setstretch{1.0}
+}
+
+\newcommand{\abstracttext}[1]{
+% \vspace*{-0.3cm}
+\vspace*{0.10cm}
+ \columnsep0.75cm
+ \begin{multicols}{2} #1 \end{multicols}
+% \vspace{\fill}
+}
+
+\newcommand{\capt}[2]{
+ \vspace*{-0.3cm}
+ \begin{center}
+ \begin{minipage}[t]{7.8cm} {\small {\bf Figure~#1}.~#2}
+  \end{minipage}
+ \end{center}
+% \vspace*{0.3cm}
+}
+
+\newcommand{\captTab}[2]{
+% \vspace*{-0.3cm}
+ \vspace*{-0.1cm}
+ \begin{center}
+ \begin{minipage}[t]{7.8cm} {\small {\bf Table~#1}.~ #2}
+ \end{minipage}
+ \end{center}
+ \vspace*{0.1cm}
+}
+
+\let\OLDthebibliography\thebibliography
+\renewcommand\thebibliography[1]{
+  \OLDthebibliography{#1}
+  \setlength{\parskip}{0pt}
+  \setlength{\itemsep}{0pt plus 0.3ex}
+}
+
+%%\renewcommand{\thefootnote}{\alph{footnote}}
+\renewcommand{\thefootnote}{\fnsymbol{footnote}}
+\newcommand{\writeto}[1]{
+ \hspace*{-2.5mm} \footnote{\small E-mail: \href{mailto:#1}{#1}} %add \small= 10pt here
+  \hspace*{-3.0mm} %decrease from -1.5 to -3.0mm
+}
+
+%%%%%%%%%%%%%%%%%%%% MACROS to isert the  figure %%%%%%%%%%%%%%%%%%%%
+% you may change the scale factor to adjust the size of the figure
+%you may crop your figure by adding the option [trim=left bottom right top, clip]
+%  and adjust the left bottom right top value as for example
+%\includegraphics*[trim = 15mm 10mm 20mm 15mm, clip,width=7.8cm,angle=#1,scale=0.92]{#2}
+
+% Use \picturelportrait{0} when you want to include a portrait figure!
+\newcommand{\pictureportrait}[2]{
+ \vspace*{0.5cm}
+ \centerline{
+  \includegraphics*[width=7.8cm,angle=#1,scale=1.0]{#2}
+%%% Here the figure scale is "scale=1.0", it can be modified if
+%%% necessary (e.g., "scale=0.7" to reduce the figure)
+%%%  \includegraphics*[width=7.8cm,height=9cm,angle=#1]{#2}
+ }
+}
+% Use \picturelandscape{0} when you want to include a landscape figure!
+\newcommand{\picturelandscape}[2]{
+ \vspace*{0.5cm}
+ \centerline{
+  \includegraphics*[width=7.8cm,angle=#1,scale=0.90]{#2}
+%%% Here the figure scale is "scale=0.92", it can be modified if
+%%% necessary (e.g., "scale=0.7" to reduce the figure)
+%%%  \includegraphics*[width=7.8cm,height=5.5cm,angle=#1]{#2}
+%%%\includegraphics*[trim = 15mm 10mm 20mm 15mm, clip,width=7.8cm,angle=#1,scale=0.92]{#2}
+ }
+}
+
+%%%%%%%%%%%%%%%%% USER'S INPUT IS EXPECTED BELOW THIS LINE %%%%%%%%%%%%%%%%%
+
+\begin{document}
+\abstracttitle{
+Instructions for preparation of abstracts for ViCPEAC 2021
+
+second line of title if needed but restrict the title to two lines
+}%end \abstracttitle
+
+\authors{
+A Einstein$^{1}$\writeto{corresponding.author1@abcdef.edu},
+W E Pauli$^{2}$\writeto{corresponding.author2@ghijkl.edu}
+and E Schr\"odinger$^{1,2}$
+
+Use only initial letters for first name, no full stops; use superscript number\textmd{$^{1,2\dots}$} for affiliation (10 pt)
+and symbol\textmd{$^{*,\dagger}$} for corresponding author(s) (2 max) in footnote (10 pt) %(maximum 2 emails)
+} %end \authors
+
+\addresses{
+$^1$Affiliation with laboratory and/or University name, city, zip code,  country
+
+$^2$Affiliation with laboratory and/or University name, city, zip code,  country
+}%end \addresses
+
+\synopsis{\hspace*{2mm}
+ %Please replace the text with your synopsis.
+The synopsis should be explicit and concise with a maximum length of 600 characters including spaces. Use single-spaced lines with 10 pt Roman font.
+} %end \synopsis
+
+\abstracttext{
+This is a sample abstract for ViCPEAC 2021.
+
+1.
+Abstracts should be written in English.
+The abstract should fit on one A4 page without the page number.
+It should be submitted in PDF format together with the source files (text and figure) through the conference web site.
+Files larger than 1 Mb will be rejected.
+
+2. It is your responsibility to check that the abstract is correctly formatted and readable.
+Incorrectly formatted abstracts will be rejected.
+Do not modify the pre-defined margins.
+
+3. Use 11 pt Roman font for the text or a similar font such as Times New Roman throughout the abstract.
+Font sizes are listed in table~1.
+
+\begin{center}
+\captTab{1}{Font sizes to be used in the abstract.}
+\begin{tabular}[b]{lccc}
+\hline
+   & Title & Authors-               & Affiliations-  \\
+   &       & body                  & synopsis- \\
+   &       &                       & references  \\
+\hline
+Size & 14~pt & 11~pt & 10~pt  \\
+\hline
+\end{tabular}
+\end{center}
+
+4. The title should be typed in 14 pt boldface font and centered.
+
+5. Leave an empty line (simple, 9 pt) after the title line(s), after the author(s) list and after the affiliation(s) list.
+
+6. Leave an empty line of 18 pt after the synopsis.
+Type the bodytext in two-column format with 0.75~cm column separation.
+The text should be single-spaced and the first line of each paragraph should be indented by 0.5~cm.
+
+7. Only one figure file, which may display subfigures, is allowed.
+It will be shown in colour in the electronic version of the abstract.
+Give to the figure a separate caption (10 pt) and, like a table caption (10 pt), it should be concise.
+If you submit a colour figure it is your responsibility to ensure that it is easy to read and to be understood even in grayscale mode.
+When including the figure, pay close attention to not produce an oversized final PDF file.
+
+\picturelandscape{0}{ViCPEAC-logo.eps}
+%\picturelandscape{0}{ViCPEAC-logo.pdf}
+%\picturelandscape{0}{ViCPEAC-logo.png}
+%\picturelandscape{0}{ViCPEAC-logo.jpg}
+\capt{1}{A typical conference logo employing a soothing color scheme.}
+
+8. References in the text should be given by numbers in square brackets~\cite{mar01,ref2} ("Vancouver system").
+The list of references (10~pt) follows the last line of the text with one extra line inserted.
+Follow the style of JPCS (as Ref.~\cite{mar01} below).
+
+
+
+\begingroup
+\vspace{-0.25cm}
+\small
+\begin{thebibliography}{1}
+\vspace{-0.25cm}
+
+%insert your references here using \bibitem
+\bibitem{mar01} Martin B {\em et al} 2001 {\em J. Phys.: Conf. Ser.}
+\href{http://iopscience.iop.org/article/10.1088/1742-6596/875/3/022021/pdf}
+{{\bf 123} 012021}
+
+\bibitem{ref2} Reference 2 and so on
+
+\end{thebibliography}
+\endgroup
+}%\abstracttext
+
+% end of the body
+\end{document}

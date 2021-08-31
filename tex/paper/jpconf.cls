@@ -101,12 +101,13 @@
    \end{indented}%
    \smallskip}
 %E-MAIL
-\def\eads#1{\vspace*{5pt}\address{E-mail: #1}}
-\def\ead#1{\vspace*{5pt}\address{E-mail: \mailto{#1}}}
+\def\eads#1{\vspace*{5pt}\reset@font\normalsize\address{E-mail:  #1}}
+\def\ead#1{\vspace*{5pt}\reset@font\normalsize\address{E-mail: \mailto{#1}}}
 \def\mailto#1{{\tt #1}}
 %ADDRESS
 \newcommand{\address}[1]{\begin{indented}
-   \item[]\rm\raggedright #1
+   %\item[]\rm\raggedright #1
+   \item[]\normalsize\raggedright #1
    \end{indented}}
 \newlength{\indentedwidth}
 \newdimen\mathindent
@@ -506,7 +507,7 @@
 \newenvironment{abstract}{%
       \vspace{16pt plus3pt minus3pt}
       \begin{indented}
-      \item[]{\bfseries \abstractname.}\quad\rm\ignorespaces} 
+      \item[]{\reset@font\normalsize\bfseries \abstractname.}\quad\rm\ignorespaces} 
       {\end{indented}\vspace{10mm}}
 %ENVIRONMENT: description
 \newenvironment{description}
